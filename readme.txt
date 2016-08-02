@@ -3,7 +3,7 @@ Contributors: bobbingwide, vsgloik
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, smart, lazy
 Requires at least: 4.4
-Tested up to: 4.4
+Tested up to: 4.6-RC1
 Stable tag: 0.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -13,29 +13,39 @@ Post process oik-bwtrace daily trace summary reports
 
 == Installation ==
 1. Upload the contents of the slog plugin to the `/wp-content/plugins/slog' directory
-1. Activate the slog plugin through the 'Plugins' menu in WordPress
+1. Run the routines using oik-batch
 
 == Frequently Asked Questions ==
 
 = What is this for? = 
 
-slog provides mechanisms to post process daily trace summary report files.
+slog provides some basic mechanisms to post process daily trace summary report files.
+In combination with wp-top12 the routines can be used to:
 
-* download for analysis and comparison
+* download trace summary files for analysis and comparison
 * produce summary reports
 * use as input to drive performance tests
+* Find IPs to block
 
 = What is provided? = 
 
-In version 0.0.0 there are 4 routines:
+In version 0.0.0 there are 2 routines
+wp-top12 provides more
 
-vt.php -
-vt-stats.php -
-vt-top12.php - 
-vt-driver.php - 
+plugin    | file         | purpose
+--------- | ------------ | ----------
+slog      | vt-ip.php    | Find IPs to block by counting the number of login requests per IP
+slog      | getvt.php    | Download bwtrace.vt.mmdd files for post processing
+wp-top12  | getvt.php    | Download bwtrace.vt.mmdd files for post processing
+wp-top12  | vt-stats.php | Summarise stats for a date range
+wp-top12  | vt-top12.php | Perform performance analysis comparing multiple log files
+wp-top12  | vt-driver.php  
 
 Note: vt comes from the bwtrace.vt.mmdd filename which is so named since it records
 value text pairs ( see bw_trace_vt() ).
+
+WordPress MultiSite sites add the blog_id suffix to each site other than site 1.  
+
 
 
 
