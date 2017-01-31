@@ -4,8 +4,81 @@
  * Syntax: oikwp getvt.php [startdate [enddate]] host=blah
  * 
  * @TODO Where startdate and enddate are currently hardcoded
+ * @TODO Use the directory structure to determine which urls to access
+ * @TODO Start from the most recent date found
+ * 
  * 
  */
+ 
+function get_url( $host, $date ) {
+  $url = "http://$host/bwtrace.vt.$date";
+	return( $url );
+}
+
+/**
+ * Fetch the vt file if necessary
+ *
+ * @param string $host
+ * @param string $date
+ *
+ */
+
+function maybe_get_vt( $host, $date ) {
+	$need_to_fetch = check_vt( $host, $date );
+	if ( $need_to_fetch ) {
+		$content = get_vt( $host, $date );
+		save_vt( $host, $date, $content );
+	}		
+}
+
+/** 
+ * Return the target file name
+ */ 
+function get_filename( $host, $date ) {
+	return( "vt2017/$host/$date.vt" );
+}
+
+/**
+ * Check if the file already exists
+ * 
+ */ 
+function check_vt( $host, $date ) {
+	$need_to_fetch = true;
+	$filename = get_filename( $host, $date ); 
+	if ( file_exists( $filename ) && $fs = filesize( $filename ) ) {
+		$need_to_fetch = false;
+	} else {
+		$date2 = substr( $date, 4 );
+		$filename2 = get_filename( $host, $date2 );
+		if ( file_exists( $filename2 ) && $fs = filesize( $filename2 ) ) {
+			rename(	$filename2, $filename );
+			$need_to_fetch = false;
+		}
+	}
+	if ( !$need_to_fetch ) {
+		echo "$date $filename $fs already downloaded" . PHP_EOL;
+	}
+	return( $need_to_fetch );
+}
+
+
+/**
+ * Gets bwtrace.vt URL
+ *
+ * @param string $url - the URL to fetch
+ * @return string|false - false if the file does not exist or we get a 404 page
+ */
+function get_contents( $url ) {
+  $result = @file_get_contents( $url );
+	if ( !$result !== false ) {
+		if ( 0 === strpos( $result, "<!" ) ) {		// It looks like a 404 page
+			$result = false;
+		}
+	}
+	return( $result );
+}
+		
+	
 
 
  
@@ -17,9 +90,14 @@
  * @return string the file contents 
  */
 function get_vt( $host, $date ) {
-  $url = "http://$host/bwtrace.vt.$date";
   //$result = bw_remote_get2( $url );
-  $result = file_get_contents( $url );
+	$url = get_url( $host, $date );
+	$result = get_contents( $url );
+	if ( false === $result ) {
+		$date2 = substr( $date, 4 ); 
+		$url = get_url( $host, $date2 );
+		$result = get_contents( $url );
+	}
   //echo $result;
   echo "$date $host: " . strlen( $result ) . PHP_EOL;
   return( $result );
@@ -29,9 +107,15 @@ function get_vt( $host, $date ) {
  * Save the file
  * 
  * Note: hardcoded target directory
+ * 
+ * @param string $host - the domain name
+ * @param string $date - the file date ( expected format yyyymmdd )
+ * @param string $content
  */
 function save_vt( $host, $date, $content ) {
-	unlink( "vt2017/$host/$date.vt" );
+	@unlink( "vt2017/$host/$date.vt" );
+	$date2 = substr( $date, 4 );
+	@unlink( "vt2017/$host/$date2.vt" );
   file_put_contents( "vt2017/$host/$date.vt", $content ); 
 }
 
@@ -119,7 +203,7 @@ if ( $host ) {
 //echo "end: $enddate";
 
 for ( $thisdate = $startdate; $thisdate<= $enddate; $thisdate+= 86400 ) {
-	$dates[] = date( "md", $thisdate); 
+	$dates[] = date( "Ymd", $thisdate); 
 }
 echo " Start:" . reset( $dates) . PHP_EOL;
 echo "End: " . end( $dates ) . PHP_EOL;
@@ -131,8 +215,7 @@ if ( true ) {
 
   foreach ( $dates as $date ) {
     foreach ( $hosts as $host ) {
-      $content = get_vt( $host, $date );
-      save_vt( $host, $date, $content );
+			maybe_get_vt( $host, $date );
     }
   }  
 }
@@ -151,8 +234,9 @@ if ( true ) {
 			
 			for ( $count = 2; $count <= $count_sites; $count++ ) {
 				$datedotn = "$date.$count";
-				$content = get_vt( $host, $datedotn );
-				save_vt( $host, $datedotn, $content );
+				maybe_get_vt( $host, $datedotn );
+				//$content = get_vt( $host, $datedotn );
+				//save_vt( $host, $datedotn, $content );
 			}
 			
 		}

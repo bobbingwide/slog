@@ -3,7 +3,7 @@ Contributors: bobbingwide, vsgloik
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, smart, lazy
 Requires at least: 4.4
-Tested up to: 4.6-RC1
+Tested up to: 4.7.2
 Stable tag: 0.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -29,7 +29,7 @@ In combination with wp-top12 the routines can be used to:
 
 = What is provided? = 
 
-In version 0.0.0 there are 2 routines
+In version 0.0.1 there are 2 routines.
 wp-top12 provides more
 
 plugin    | file         | purpose
@@ -73,10 +73,16 @@ others to perform their own analysis.
 1. slog in action
 
 == Upgrade Notice ==
+= 0.0.1 = 
+
+
 = 0.0.0 =
 New plugin, available from oik-plugins and GitHub
 
 == Changelog == 
+= 0.0.1 = 
+* Changed: Support bwtrace.vt.yyyymmdd.site_id files
+
 = 0.0.0 =
 * Added: New plugin
 
