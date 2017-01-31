@@ -1,10 +1,10 @@
-<?php // (C) Copyright Bobbing Wide 2015
+<?php // (C) Copyright Bobbing Wide 2015-2017
 
 /*
 Plugin Name: slog
 Plugin URI: http://www.oik-plugins.com/oik-plugins/slog
 Description: Post process oik-bwtrace daily trace summary reports
-Version: 0.0.0
+Version: 0.0.1
 Author: bobbingwide
 Author URI: http://www.oik-plugins.com/author/bobbingwide
 Text Domain: slog
@@ -12,7 +12,7 @@ Domain Path: /languages/
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-    Copyright 2015-2016 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2015-2017 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,

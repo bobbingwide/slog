@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2015, 2016
+<?php // (C) Copyright Bobbing Wide 2015-2017
 
 /**
  * Syntax: oikwp getvt.php [startdate [enddate]] host=blah
@@ -10,20 +10,29 @@
 
  
 /**
- * Get the current oik version from the readme.txt file
- *
+ * Retrieve a bwtrace.vt.date file for the given date.id
+ * 
+ * @param string $host
+ * @param string $date - in form mmdd or mmdd.n where n is an integer starting from 2
+ * @return string the file contents 
  */
-
 function get_vt( $host, $date ) {
   $url = "http://$host/bwtrace.vt.$date";
-  $result = bw_remote_get2( $url );
+  //$result = bw_remote_get2( $url );
+  $result = file_get_contents( $url );
   //echo $result;
   echo "$date $host: " . strlen( $result ) . PHP_EOL;
   return( $result );
 }
 
+/**
+ * Save the file
+ * 
+ * Note: hardcoded target directory
+ */
 function save_vt( $host, $date, $content ) {
-  file_put_contents( "vt2016/$host/$date.vt", $content ); 
+	unlink( "vt2017/$host/$date.vt" );
+  file_put_contents( "vt2017/$host/$date.vt", $content ); 
 }
 
 
@@ -56,17 +65,20 @@ $hosts = array( "oik-plugins.com"
               , "oik-plugins.co.uk"
 							, "herbmiller.me"
 							, "bobbingwide.com"
-							, "wp-a2z.org"
+						//	, "wp-a2z.org"
 							,	"bigram.co.uk"
 						//	, "bobbingwide.co.uk"
 						//	, "bobbingwide.uk
-						  , "bobbingwide.org.uk"
+						//  , "bobbingwide.org.uk"
 							, "bobbingwidewebdesign.com"
 							, "cookie-cat.co.uk"
 							, "cwiccer.com"
 							, "oik-plugins.eu"
 							, "wp-pompey.org.uk"
               );
+
+$multisites = array( "wp-a2z.org" => 8
+                   );							
 							
 							
 //$hosts = array( "herbmiller.me" ); 
@@ -82,7 +94,7 @@ $hosts = array( "oik-plugins.com"
 $dates = array();
 
 $startdate = oik_batch_query_value_from_argv( 1, null );
-//echo "Start: $startdate" . PHP_EOL;
+echo "Start: $startdate" . PHP_EOL;
 $startdate = strtotime( $startdate );
 $enddate = oik_batch_query_value_from_argv( 2, null );
 if ( $enddate ) {
@@ -91,7 +103,7 @@ if ( $enddate ) {
 	$enddate = time();
 }
 
-//echo "End: $enddate" . PHP_EOL;
+echo "End: $enddate" . PHP_EOL;
 $host = oik_batch_query_value_from_argv( "host", null );
 if ( $host ) {
 	$hosts = bw_as_array( $host );
@@ -119,10 +131,31 @@ if ( true ) {
 
   foreach ( $dates as $date ) {
     foreach ( $hosts as $host ) {
-
       $content = get_vt( $host, $date );
       save_vt( $host, $date, $content );
     }
+  }  
+}
+
+/** 
+ * Fetch and save the bwtrace.vt.mmdd.suffix file for each of the selected hosts
+ */
+if ( true ) {
+
+  foreach ( $dates as $date ) {
+		foreach ( $multisites as $host => $count_sites ) {
+			echo "$host: $count_sites" . PHP_EOL;
+			
+      $content = get_vt( $host, $date );
+      save_vt( $host, $date, $content );
+			
+			for ( $count = 2; $count <= $count_sites; $count++ ) {
+				$datedotn = "$date.$count";
+				$content = get_vt( $host, $datedotn );
+				save_vt( $host, $datedotn, $content );
+			}
+			
+		}
   }  
 }
 
@@ -136,6 +169,14 @@ ini_set('memory_limit','2048M');
 foreach ( $dates as $date ) {
 
   foreach ( $hosts as $host ) {
-    process_file( "vt2016/$host/$date.vt" );
+    process_file( "vt2017/$host/$date.vt" );
   }
+	
+	foreach ( $multisites as $host => $count_sites ) {
+		process_file( "vt2017/$host/$date.vt" );
+		for ( $count = 2; $count <= $count_sites; $count++ ) {
+			process_file( "vt2017/$host/$date.$count.vt" );
+		}
+	}
+			
 }  
