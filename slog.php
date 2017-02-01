@@ -34,7 +34,9 @@ slog_loaded();
 
 
 /**
- * Processing when the plugin file is loaded
+ * Processing when the plugin file is loaded.
+ * 
+ * This plugin is only run under the command line.
  */
 function slog_loaded() {
 }

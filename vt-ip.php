@@ -14,11 +14,13 @@
  */
 
 function vt_ip_loaded() {
-	$year = "2016";
+	$year = "2017";
 	$host = "oik-plugins.com"; 
 	$host = "bobbingwide.org.uk";
+	$host = "bobbingwide.com";
 	$mmdd = "0731";
 	$mmdd = "0802";
+	$mmdd = "20170131";
 	$file = "vt$year/$host/$mmdd.vt";
 	$match_request = "wp-login.php"; 
 	$contents = file( $file );
@@ -106,6 +108,13 @@ function add_ip( $ip, $elapsed, $http_user_agent, $request, $match_request="wp-l
  * Print the IPs summary
  *
  * @TODO Add average column
+ * 
+ * `
+ * IP,count,elapsed,match count,match elapsed,HTTP_user_agent vt2017/bobbingwide.com/20170131.vt
+ * 185.119.172.181,202,133.579816,0,0,WordPress/4.7.2; http://bobbingwide.com
+ * the.rest.lt.80,477,445.243417,10,13.02348,134
+ * TOTAL,679,578.823233,10,13.02348,135
+ * `
  *
  * @param integer $limit - number of hits to report individually
  * @param string $file name - so we know where the information comes from
