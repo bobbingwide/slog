@@ -46,14 +46,21 @@ function check_vt( $host, $date ) {
 	$need_to_fetch = true;
 	$filename = get_filename( $host, $date ); 
 	if ( file_exists( $filename ) && $fs = filesize( $filename ) ) {
-		$need_to_fetch = false;
+		$contents = get_contents( $filename );
+		if ( $contents ) {
+			$need_to_fetch = false;
+		}
 	} else {
 		$date2 = substr( $date, 4 );
 		$filename2 = get_filename( $host, $date2 );
 		if ( file_exists( $filename2 ) && $fs = filesize( $filename2 ) ) {
-			rename(	$filename2, $filename );
-			$need_to_fetch = false;
-		}
+		
+			$contents = get_contents( $filename2 );
+			if ( $contents ) {
+				rename(	$filename2, $filename );
+				$need_to_fetch = false;
+			}
+		}	
 	}
 	if ( !$need_to_fetch ) {
 		echo "$date $filename $fs already downloaded" . PHP_EOL;
@@ -64,15 +71,22 @@ function check_vt( $host, $date ) {
 
 /**
  * Gets bwtrace.vt URL
+ * 
+ * If the response appears to be an HTML page then it means that the file does not exist.
+ * This can happen if:
+ * - oik-bwtrace is writing files with date format mmdd
+ * - daily trace summary reports are not being created.
  *
  * @param string $url - the URL to fetch
  * @return string|false - false if the file does not exist or we get a 404 page
  */
 function get_contents( $url ) {
   $result = @file_get_contents( $url );
-	if ( !$result !== false ) {
+	if ( $result !== false ) {
 		if ( 0 === strpos( $result, "<!" ) ) {		// It looks like a 404 page
 			$result = false;
+		} else {
+			//echo substr( $result, 0, 80 );
 		}
 	}
 	return( $result );
@@ -99,7 +113,7 @@ function get_vt( $host, $date ) {
 		$result = get_contents( $url );
 	}
   //echo $result;
-  echo "$date $host: " . strlen( $result ) . PHP_EOL;
+  echo "$date $url " . strlen( $result ) . PHP_EOL;
   return( $result );
 }
 
@@ -121,15 +135,17 @@ function save_vt( $host, $date, $content ) {
 
 
 
-oik_require( "wp-batch-remote.php", "play" );
+//oik_require( "wp-batch-remote.php", "play" );
 
-oik_require( "includes/oik-remote.inc" ); 
+//oik_require( "includes/oik-remote.inc" ); 
  
 //  "oik-plugins.biz" and oik-plugins.com are now the same
 // "oik-plugins.uk" now also oik-plugins.com
 
-	
-/* 
+
+/** 
+ * Returns the single site domains to process
+ *  
 bigram.co.uk,,95,
 bobbingwide.co.uk,y,,
 y bobbingwide.com,,508,
@@ -143,9 +159,12 @@ y oik-plugins.com,,,
 oik-plugins.eu,,535,
 y wp-a2z.org,,1454,
  wp-pompey.org.uk,,186,
-*/
-
-$hosts = array( "oik-plugins.com"
+ 
+ * @return array of domain names
+ *
+ */
+function get_hosts() {
+	$hosts = array( "oik-plugins.com"
               , "oik-plugins.co.uk"
 							, "herbmiller.me"
 							, "bobbingwide.com"
@@ -160,107 +179,130 @@ $hosts = array( "oik-plugins.com"
 							, "oik-plugins.eu"
 							, "wp-pompey.org.uk"
               );
-
-$multisites = array( "wp-a2z.org" => 8
-                   );							
-							
-							
-//$hosts = array( "herbmiller.me" ); 
- 					
-//$dates = array( "0320", "0321", "0322", "0323", "0324", "0325", "0326", "0327", "0328", "0329", "0330", "0331" );
-//$dates = array( "0401", "0402", "0403", "0404", "0405", "0406", "0407", "0408", "0409", "0410" );
-//$dates = array( "0411", "0412", "0413", "0414", "0415", "0416", "0417", "0418", "0419", "0420" );
-//$dates = array( "0421", "0422", "0423", "0424", "0425", "0426", "0427", "0428", "0429", "0430" );
-//$dates = array( "0501", "0502", "0503", "0504", "0505" ); // , "0426", "0427", "0428", "0429", "0430" );
-
-//$hosts = array( "bobbingwide.org.uk" );
-
-$dates = array();
-
-$startdate = oik_batch_query_value_from_argv( 1, null );
-echo "Start: $startdate" . PHP_EOL;
-$startdate = strtotime( $startdate );
-$enddate = oik_batch_query_value_from_argv( 2, null );
-if ( $enddate ) {
-	$enddate = strtotime( $enddate );
-} else {
-	$enddate = time();
+	return( $hosts );
 }
 
-echo "End: $enddate" . PHP_EOL;
-$host = oik_batch_query_value_from_argv( "host", null );
-if ( $host ) {
-	$hosts = bw_as_array( $host );
+/**
+ * Returns the multisite domains to process
+ *
+ * The array includes the number of sites to query
+ * 
+ * @TODO This assumes that each site is numerically indexed starting from 1.
+ * It would be better to just include the site ID.
+ * 
+ * @return array multisite URLs
+ *
+ */
+function get_multisites() {
+	$multisites = array( "wp-a2z.org" => 8
+                   );
+	return( $multisites );																	
 }
+	
 
-//$enddate = time();
-//$enddate = strtotime( "2016-07-27" );
+/**
+ * Get the date range to process
+ * 
+ * @return array of dates in form yyyymmdd ascending from the startdate to the enddate 
+ */
+function get_dates() {
 
-//$startdate = strtotime( "2015-06-01" );
-//$enddate = strtotime( "2015-07-0" );
+	$dates = array();
 
-//echo "start: $startdate" ;
-//echo "end: $enddate";
+	$startdate = oik_batch_query_value_from_argv( 1, null );
+	echo "Start: $startdate" . PHP_EOL;
+	if ( $startdate ) {
+		$startdate = strtotime( $startdate );
+	} else {
+		$startdate = time();
+	}	
+	$enddate = oik_batch_query_value_from_argv( 2, null );
+	if ( $enddate ) {
+		$enddate = strtotime( $enddate );
+	} else {
+		$enddate = time();
+	}
 
-for ( $thisdate = $startdate; $thisdate<= $enddate; $thisdate+= 86400 ) {
-	$dates[] = date( "Ymd", $thisdate); 
-}
-echo " Start:" . reset( $dates) . PHP_EOL;
-echo "End: " . end( $dates ) . PHP_EOL;
+	echo "End: $enddate" . PHP_EOL;
+	
+	for ( $thisdate = $startdate; $thisdate<= $enddate; $thisdate+= 86400 ) {
+		$dates[] = date( "Ymd", $thisdate); 
+	}
+	echo "Start:" . reset( $dates) . PHP_EOL;
+	echo "End: " . end( $dates ) . PHP_EOL;
+	return( $dates );
+}	
 
 /** 
  * Fetch and save the bwtrace.vt.mmdd file for each of the selected hosts
  */
-if ( true ) {
-
-  foreach ( $dates as $date ) {
-    foreach ( $hosts as $host ) {
+function fetch_sites( $hosts, $dates ) {
+	foreach ( $dates as $date ) {
+		foreach ( $hosts as $host ) {
 			maybe_get_vt( $host, $date );
-    }
-  }  
+		}
+	}  
 }
 
 /** 
  * Fetch and save the bwtrace.vt.mmdd.suffix file for each of the selected hosts
  */
-if ( true ) {
-
-  foreach ( $dates as $date ) {
+function fetch_multisites( $multisites, $dates ) {
+	foreach ( $dates as $date ) {
 		foreach ( $multisites as $host => $count_sites ) {
 			echo "$host: $count_sites" . PHP_EOL;
-			
-      $content = get_vt( $host, $date );
-      save_vt( $host, $date, $content );
-			
+			maybe_get_vt( $host, $date );
 			for ( $count = 2; $count <= $count_sites; $count++ ) {
 				$datedotn = "$date.$count";
 				maybe_get_vt( $host, $datedotn );
-				//$content = get_vt( $host, $datedotn );
-				//save_vt( $host, $datedotn, $content );
 			}
-			
 		}
   }  
 }
 
+
 /**
  * Process each of the files from the hosts
  */
-oik_require( "vt.php", "play" );
+function process_files( $hosts, $multisites, $dates ) { 
+	oik_require( "vt.php", "play" );
 
-ini_set('memory_limit','2048M');
+	ini_set('memory_limit','2048M');
 
-foreach ( $dates as $date ) {
+	foreach ( $dates as $date ) {
 
-  foreach ( $hosts as $host ) {
-    process_file( "vt2017/$host/$date.vt" );
-  }
-	
-	foreach ( $multisites as $host => $count_sites ) {
-		process_file( "vt2017/$host/$date.vt" );
-		for ( $count = 2; $count <= $count_sites; $count++ ) {
-			process_file( "vt2017/$host/$date.$count.vt" );
+		foreach ( $hosts as $host ) {
+			process_file( "vt2017/$host/$date.vt" );
 		}
-	}
+ 
+		foreach ( $multisites as $host => $count_sites ) {
+			process_file( "vt2017/$host/$date.vt" );
+			for ( $count = 2; $count <= $count_sites; $count++ ) {
+				process_file( "vt2017/$host/$date.$count.vt" );
+			}
+		}
 			
-}  
+	}
+}
+
+/**
+ * Implements "run_getvt.php" 
+ * 
+ * @TODO Convert main routine to implement the "run_getvt.php" action
+ */	 
+function getvt_loaded() {
+	$dates = get_dates();
+	$host = oik_batch_query_value_from_argv( "host", null );
+	if ( $host ) {
+		$hosts = bw_as_array( $host );
+	} else { 
+		$hosts = get_hosts();
+	}
+	$multisites = get_multisites();
+	
+	fetch_sites( $hosts, $dates );
+	fetch_multisites( $multisites, $dates );
+	//process_files( $hosts, $multisites, $dates );
+} 
+
+getvt_loaded();
