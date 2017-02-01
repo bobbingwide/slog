@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2015
+<?php // (C) Copyright Bobbing Wide 2015-2017
 
 /**
  * If we get invoked at the top level then process the file

@@ -1,15 +1,20 @@
 <?php // (C) Copyright Bobbing Wide 2015-2017
 
 /**
- * Syntax: oikwp getvt.php [startdate [enddate]] host=blah
+ * Syntax: oikwp getvt.php [startdate [enddate]] host=blah command=fetch|multi|process
  * 
- * @TODO Where startdate and enddate are currently hardcoded
  * @TODO Use the directory structure to determine which urls to access
  * @TODO Start from the most recent date found
  * 
- * 
  */
  
+/**
+ * Returns the URL to fetch
+ *
+ * @param string $host the primary domain name
+ * @param string $date - format yyyymmdd or mmdd for earlier versions of oik-bwtrace
+ * @return string the URL to fetch
+ */
 function get_url( $host, $date ) {
   $url = "http://$host/bwtrace.vt.$date";
 	return( $url );
@@ -20,9 +25,7 @@ function get_url( $host, $date ) {
  *
  * @param string $host
  * @param string $date
- *
  */
-
 function maybe_get_vt( $host, $date ) {
 	$need_to_fetch = check_vt( $host, $date );
 	if ( $need_to_fetch ) {
@@ -33,6 +36,12 @@ function maybe_get_vt( $host, $date ) {
 
 /** 
  * Return the target file name
+ *
+ * @TODO - remove hardcoded vt2017 directory name
+ * 
+ * @param string $host the primary domain name
+ * @param string $date - which may include a site ID suffix
+ * @return string 
  */ 
 function get_filename( $host, $date ) {
 	return( "vt2017/$host/$date.vt" );
@@ -91,11 +100,7 @@ function get_contents( $url ) {
 	}
 	return( $result );
 }
-		
-	
 
-
- 
 /**
  * Retrieve a bwtrace.vt.date file for the given date.id
  * 
@@ -133,35 +138,12 @@ function save_vt( $host, $date, $content ) {
   file_put_contents( "vt2017/$host/$date.vt", $content ); 
 }
 
-
-
-//oik_require( "wp-batch-remote.php", "play" );
-
-//oik_require( "includes/oik-remote.inc" ); 
- 
-//  "oik-plugins.biz" and oik-plugins.com are now the same
-// "oik-plugins.uk" now also oik-plugins.com
-
-
 /** 
  * Returns the single site domains to process
- *  
-bigram.co.uk,,95,
-bobbingwide.co.uk,y,,
-y bobbingwide.com,,508,
-bobbingwide.uk,y,,
-bobbingwidewebdesign.com,,163,
-cookie-cat.co.uk,,81,
-cwiccer.com,,250,
-y herbmiller.me,,275,
-y oik-plugins.co.uk,,361,
-y oik-plugins.com,,,
-oik-plugins.eu,,535,
-y wp-a2z.org,,1454,
- wp-pompey.org.uk,,186,
- 
- * @return array of domain names
  *
+ * @TODO Issue #1 - Convert to general purpose
+ *  
+ * @return array of domain names
  */
 function get_hosts() {
 	$hosts = array( "oik-plugins.com"
@@ -187,8 +169,7 @@ function get_hosts() {
  *
  * The array includes the number of sites to query
  * 
- * @TODO This assumes that each site is numerically indexed starting from 1.
- * It would be better to just include the site ID.
+ * @TODO This assumes that each site is numerically indexed starting from 1. It would be better to just include the site ID.
  * 
  * @return array multisite URLs
  *
@@ -263,9 +244,13 @@ function fetch_multisites( $multisites, $dates ) {
 
 /**
  * Process each of the files from the hosts
+ * 
+ * @param array $hosts
+ * @param array $multisites
+ * @param array $dates
  */
 function process_files( $hosts, $multisites, $dates ) { 
-	oik_require( "vt.php", "play" );
+	oik_require( "vt.php", "slog" );
 
 	ini_set('memory_limit','2048M');
 
@@ -299,10 +284,48 @@ function getvt_loaded() {
 		$hosts = get_hosts();
 	}
 	$multisites = get_multisites();
+	$command = get_command();
 	
-	fetch_sites( $hosts, $dates );
-	fetch_multisites( $multisites, $dates );
-	//process_files( $hosts, $multisites, $dates );
-} 
+	if ( in_array( $command, array( "all", "fetch", "sites") ) ) {
+		fetch_sites( $hosts, $dates );
+	}
+	if ( in_array( $command, array( "all", "fetch", "multi" ) ) ) {
+		fetch_multisites( $multisites, $dates );
+	}
+	if ( in_array( $command, array( "all", "process" ) ) ) {
+		process_files( $hosts, $multisites, $dates );
+	}
+}
+
+/**
+ * Gets the command
+ * 
+ * WP-cli would have the command values defined in the comments
+ * 
+ 
+ 
+ * 
+ */ 
+
+function get_command() {
+	$command = oik_batch_query_value_from_argv( "command", null );
+	$command = trim( $command );
+	$command = strtolower( $command );
+	switch ($command ) {
+		case null:
+			$command = "all";
+		break;
+		
+		case "fetch":
+		case "multi":
+		case "process":
+		break;
+		
+		otherwise:
+			echo "Invalid command parameter (try command=fetch|sites|multi|process )" . PHP_EOL;
+			die();
+	}
+	return( $command );
+}
 
 getvt_loaded();
