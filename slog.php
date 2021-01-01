@@ -39,4 +39,36 @@ slog_loaded();
  * This plugin is only run under the command line.
  */
 function slog_loaded() {
+	add_action( 'init', 'slog_init', 11 );
+	add_action( 'admin_menu', 'slog_admin_menu', 11 );
+}
+
+/**
+ * Implements 'init' hook for slog.
+ *
+ */
+function slog_init() {
+	/**
+	 * Slog doesn't really need to do this since oik-trace should have already done it, if activated.
+	 * This is belt and braces.
+	 */
+	if ( !function_exists( 'oik_require' ) ) {
+		// check that oik v2.6 (or higher) is available.
+		$oik_boot = dirname( __FILE__ ). "/libs/oik_boot.php";
+		if ( file_exists( $oik_boot ) ) {
+			require_once( $oik_boot );
+		}
+	}
+	oik_lib_fallback( dirname( __FILE__ ) . '/libs' );
+}
+
+function slog_admin_menu() {
+	if ( oik_require_lib( "oik-admin" ) ) {
+		$hook=add_options_page( "Slog admin", "Slog admin", "manage_options", "slog", "slog_admin_page" );
+	}
+}
+
+function slog_admin_page() {
+
+
 }
