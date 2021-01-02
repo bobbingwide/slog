@@ -3,13 +3,100 @@
 /**
  * If we get invoked at the top level then process the file
  */
-if ( isset( $argc) && $argc >= 2 ) {
-  $file = $argv[1];
-  process_file( $file );
-} else {  
-  $file = "bwtrace.vt.0314";
+if ( isset( $argc ) && $argc >= 2 ) {
+	$host = $argv[1];
+} else {
+	$host = 'anchorgolf.com';
+	//$host = 'classic-car-doctor.com';
+	$host = 'stainedglass-portsmouth.com';
 }
-//echo $file . PHP_EOL;
+
+if ( isset( $argc) && $argc >= 3 ) {
+  $vtfile = $argv[2];
+} else {
+  $vtfile = "bwtrace.vt.20200314";
+}
+
+do_files( $host );
+
+function do_files( $host) {
+
+
+	for ( $mm = 1; $mm <= 5; $mm++ ) {
+		for ( $dd = 1; $dd <= 31; $dd++ ) {
+			$date = '2020' . sprintf( "%'.02d", $mm ) . sprintf( "%'.02d", $dd);
+			$dateslash = '2020/' . sprintf( "%'.02d", $mm ) . '/' . sprintf( "%'.02d", $dd);
+			$vtfile='bwtrace.vt.' . $date;
+			$file  =array();
+			$file[]='C:';
+			$file[]='backups-SB';
+			$file[]=$host;
+			$file[]=$vtfile;
+
+			$filename=implode( '/', $file );
+
+			if ( file_exists( $filename )) {
+				//process_file( $filename);
+				echo "$filename," ;
+				$file=readcsv( $filename );
+				average_file( $file, $dateslash );
+				echo PHP_EOL;
+			}
+
+		}
+
+	}
+
+
+
+
+
+
+}
+
+function average_file( $file, $dateslash ) {
+	$total=0;
+	$bad = 0;
+	$lines=count( $file );
+	$lines = 0;
+	foreach ( $file as $transline ) {
+
+
+		$trans  =str_getcsv( $transline );
+		$request=$trans[0];
+		if ( true || $request === '/' ) {
+			$lines ++;
+			$final=$trans[2];
+			if ( ! is_numeric( $final ) ) {
+				$final=0;
+				$lines --;
+				//echo $transline;
+				//print_r( $trans );
+				//echo $final;
+
+				//gob();
+
+			}
+			if ( $final < 0 ) {
+				$final=0;
+				$lines --;
+
+			}
+			//echo $final;
+			//echo ' ';
+			$total+=$final;
+		}
+	}
+		$average = 0;
+		if ( $lines ) {
+			$average= $total / $lines;
+		}
+
+	echo "$lines,$total,$dateslash,$average";
+	//echo PHP_EOL;
+}
+
+
 
 
 /**
