@@ -161,10 +161,10 @@ function slog_admin_report_options() {
  *
  * Option | Meaning
  * ------ | --------
- * Count | Count of the requests in this grouping
- * Elapsed | Total elapsed time of the requests in this grouping
- * Percentage | Percentage of elapsed time of the requests in this grouping
- * Accumulate percentage | Accumulated percentage of the requests
+ * count | Count of the requests in this grouping
+ * elapsed | Total elapsed time of the requests in this grouping
+ * percentage | Percentage of elapsed time of the requests in this grouping
+ * accum | Accumulated percentage of the requests
  */
 function slog_admin_display_options() {
 	$display = [ 'count' => __( 'Count', 'slog')
@@ -213,8 +213,11 @@ function slog_admin_chart_atts() {
 
 function slog_admin_chart_content() {
 	$options = get_option( 'slog_options');
+	oik_require( 'class-slog-reporter.php', 'slog' );
+	$slogger = new Slog_Reporter();
+	$content = $slogger->run_report( $options );
 
-	$content = "A,B,C\n1,2,3\n4,5,6";
+	//$content = "A,B,C\n1,2,3\n4,5,6";
 	return $content;
 }
 
