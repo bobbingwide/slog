@@ -216,9 +216,17 @@ function slog_admin_chart_content() {
 	oik_require( 'class-slog-reporter.php', 'slog' );
 	$slogger = new Slog_Reporter();
 	$content = $slogger->run_report( $options );
-
+	slog_getset_content( $content);
 	//$content = "A,B,C\n1,2,3\n4,5,6";
 	return $content;
+}
+
+function slog_getset_content( $content=null ) {
+	static $saved_content = null;
+	if ( $content ) {
+		$saved_content = $content;
+	}
+	return $saved_content;
 }
 
 function slog_admin_chart_display( $atts, $content ) {
@@ -227,6 +235,21 @@ function slog_admin_chart_display( $atts, $content ) {
 }
 
 function slog_admin_table() {
-	BW_::p("Admin table");
+	BW_::p("Table");
+	$content = slog_getset_content();
+	$content_array = explode( "\n", $content );
+	$headings = array_shift( $content_array );
+	stag( "table", "widefat" );
+    stag( "thead" );
+	//$headings = array( __( "Field", "oik-bwtrace" ), __( "Value", "oik-bwtrace" ), __( "Notes", "oik-bwtrace" ) );
+	bw_tablerow( explode( ',', $headings ), "tr", "th" );
+	etag( "thead" );
+	stag( "tbody" );
+	foreach ( $content_array as $content ) {
+		bw_tablerow( explode( ',', $content ) );
+	}
+	etag( "tbody" );
+	etag( "table" );
 	bw_flush();
+
 }
