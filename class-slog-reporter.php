@@ -1,4 +1,10 @@
 <?php
+/**
+ * @copyright (C) Copyright Bobbing Wide 2021
+ * @package slog
+ *
+ * Slog Reporter - runs Slog reports to analyse Daily Trace Summary files.
+ */
 
 //ini_set('memory_limit','1572M');
 
@@ -11,9 +17,6 @@ oik_require( "libs/class-object-grouper.php", $plugin );
 oik_require( "libs/class-csv-merger.php", $plugin );
 
 oik_require( 'class-narrator.php', 'oik-i18n');
-
-
-
 
 class Slog_Reporter {
 
@@ -40,6 +43,7 @@ class Slog_Reporter {
 			}
 			$content = $stats->run_report();
 		} else {
+			p( "Dummy content. For test purposes only" );
 			$content="A,B,C\n1,2,3\n4,5,6";
 		}
 		return $content;
@@ -47,9 +51,9 @@ class Slog_Reporter {
 
 	/**
 	 * Set options values.
+	 *
 	 * @param $options
 	 */
-
 	public function parse_options( $options ) {
 		$this->file = $options['file'];
 		$this->report = $options['report'];

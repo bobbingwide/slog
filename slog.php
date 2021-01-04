@@ -119,9 +119,9 @@ display | Display values | Count,  Total Elapsed, Percentage, Accumulated percen
 having | Having      | Variable for selecting
  */
 function slog_admin_form() {
-	bw_form( "options.php" );
+	bw_form('options.php');
 	$options = get_option('slog_options');
-	stag( 'table class="form-table"' );
+	stag( 'table', 'form-table' );
 	bw_flush();
 	settings_fields('slog_options_options');
 
@@ -136,10 +136,18 @@ function slog_admin_form() {
 	BW_::bw_textfield_arr( 'slog_options', __( 'Having', 'slog'), $options, 'having', 10 );
 
 	etag( "table" );
-	BW_::p( isubmit( "ok", __( "Save settings", 'slog' ), null, "button-primary" ) );
+	BW_::p( isubmit( "ok", __( "Save and run", 'slog' ), null, "button-primary" ) );
 	etag( "form" );
 	bw_flush();
 }
+
+/**
+ * Lists the available Chart types.
+ *
+ * @TODO Extend to Stacked Bar and other variations possible using options.
+ *
+ * @return array
+ */
 
 function slog_admin_type_options() {
 	$types  = [ 'line' => __( "Line", 'slog' ),
@@ -149,9 +157,17 @@ function slog_admin_type_options() {
 	return $types;
 }
 
+/**
+ * Return the fields as well as the programmatically supported request types.
+ *
+ * @return string[]
+ */
+
 function slog_admin_report_options() {
-	$reports = [ 'request_types' => 'Request types',
-		'suri' => 'Stripped Request URIs',
+	$reports = [ 'request_types' => __( 'Request types', 'slog' ),
+		'suri' => __( 'Stripped Request URIs', 'slog' ),
+		'hooks' => __( 'Hook counts', 'slog' ),
+		'remote_IP' => __( 'Remote IP', 'slog' )
 		];
 	return $reports;
 }
@@ -163,14 +179,20 @@ function slog_admin_report_options() {
  * ------ | --------
  * count | Count of the requests in this grouping
  * elapsed | Total elapsed time of the requests in this grouping
- * percentage | Percentage of elapsed time of the requests in this grouping
- * accum | Accumulated percentage of the requests
+ * average | Average elapsed time of the requests in this grouping
+ * percentage_count | Percentage of the total requests in this grouping
+ * percentage_elapsed | Percentage of the total elapsed time of the requests in this grouping
+ * percentage_count_accumulative | Accumulated percentage of the counts
+ * percentage_elapsed_accumulative | Accumulated percentage of the total elapsed time
  */
 function slog_admin_display_options() {
 	$display = [ 'count' => __( 'Count', 'slog')
 	, 'elapsed' => __( 'Elapsed', 'slog')
-	, 'percentage' => __( 'Percentage', 'slog')
-	, 'accum' => __( 'Accumulated percentage', 'slog')
+	, 'average' => __( 'Average', 'slog')
+	, 'percentage_count' => __( 'Percentage count', 'slog')
+	, 'percentage_elapsed' => __( 'Percentage elapsed', 'slog')
+	, 'percentage_count_accumulative' => __( 'Accumulated count percentage', 'slog')
+	, 'percentage_elapsed_accumulative' => __( 'Accumulated elapsed percentage', 'slog')
 	];
 	return $display;
 }
@@ -207,6 +229,8 @@ function slog_admin_chart_atts() {
 	//print_r( $options );
 	$atts = [];
 	$atts[ 'type' ] = bw_array_get( $options, 'type');
+	//$atts['height'] = '400px';
+	$atts['class'] = 'none';
 	// How do we pass stackBars and other options?
 	return $atts;
 }
