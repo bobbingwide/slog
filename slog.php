@@ -166,8 +166,10 @@ function slog_admin_type_options() {
 function slog_admin_report_options() {
 	$reports = [ 'request_types' => __( 'Request types', 'slog' ),
 		'suri' => __( 'Stripped Request URIs', 'slog' ),
+		'suritl' => __( 'Stripped Request URIs Top Level', 'slog'),
 		'hooks' => __( 'Hook counts', 'slog' ),
-		'remote_IP' => __( 'Remote IP', 'slog' )
+		'remote_IP' => __( 'Remote IP', 'slog' ),
+		'elapsed' => __( 'Elapsed', 'slog')
 		];
 	return $reports;
 }
@@ -238,19 +240,19 @@ function slog_admin_chart_atts() {
 function slog_admin_chart_content() {
 	$options = get_option( 'slog_options');
 	oik_require( 'class-slog-reporter.php', 'slog' );
-	$slogger = new Slog_Reporter();
+	$slogger = slog_admin_slog_reporter();
 	$content = $slogger->run_report( $options );
-	slog_getset_content( $content);
+	//slog_getset_content( $content);
 	//$content = "A,B,C\n1,2,3\n4,5,6";
 	return $content;
 }
 
-function slog_getset_content( $content=null ) {
-	static $saved_content = null;
-	if ( $content ) {
-		$saved_content = $content;
+function slog_admin_slog_reporter( ) {
+	static $slogger = null;
+	if ( !$slogger ) {
+		$slogger = new Slog_Reporter();
 	}
-	return $saved_content;
+	return $slogger;
 }
 
 function slog_admin_chart_display( $atts, $content ) {
@@ -259,8 +261,13 @@ function slog_admin_chart_display( $atts, $content ) {
 }
 
 function slog_admin_table() {
-	BW_::p("Table");
-	$content = slog_getset_content();
+	BW_::p( "Table" );
+	$slogger=slog_admin_slog_reporter();
+	$content=$slogger->fetch_table();
+	slog_admin_display_table( $content );
+}
+
+function slog_admin_display_table( $content ) {
 	$content_array = explode( "\n", $content );
 	$headings = array_shift( $content_array );
 	stag( "table", "widefat" );
