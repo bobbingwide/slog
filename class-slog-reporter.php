@@ -31,17 +31,19 @@ class Slog_Reporter {
 		$this->narrator = Narrator::instance();
 	}
 
+	public $stats;
+
 	public function run_report( $options ) {
 		$this->parse_options( $options );
 		if ( $this->validate_file() ) {
-			$stats = new VT_stats();
-			$stats->set_file( $this->file );
-			$stats->set_report( $this->report );
-			$stats->set_display( $this->display );
+			$this->stats = new VT_stats();
+			$this->stats->set_file( $this->file );
+			$this->stats->set_report( $this->report );
+			$this->stats->set_display( $this->display );
 			if ( $this->having ) {
-				$stats->set_having( $this->having );
+				$this->stats->set_having( $this->having );
 			}
-			$content = $stats->run_report();
+			$content = $this->stats->run_report();
 		} else {
 			p( "Dummy content. For test purposes only" );
 			$content="A,B,C\n1,2,3\n4,5,6";
@@ -70,6 +72,9 @@ class Slog_Reporter {
 		}
 		return true;
 
+	}
+	public function fetch_table() {
+		return $this->stats->fetch_table();
 	}
 
 }
