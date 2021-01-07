@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2015-2020
+<?php // (C) Copyright Bobbing Wide 2015-2021
 
 /*
 Plugin Name: slog
@@ -12,7 +12,7 @@ Domain Path: /languages/
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-    Copyright 2015-2017 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2015-2021 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -58,9 +58,14 @@ function slog_init() {
 		$oik_boot = dirname( __FILE__ ). "/libs/oik_boot.php";
 		if ( file_exists( $oik_boot ) ) {
 			require_once( $oik_boot );
+
 		}
 	}
-	oik_lib_fallback( dirname( __FILE__ ) . '/libs' );
+	$libs = oik_lib_fallback( dirname( __FILE__ ) . '/libs' );
+	//print_r( $libs );
+
+
+
 	add_action( 'admin_init', 'slog_options_init' );
 }
 
@@ -70,9 +75,15 @@ function slog_admin_enqueue_scripts() {
 	}
 }
 
+/**
+ * Note: slog is dependent upon oik-bwtrace which itself uses & delivers the shared library files we need.
+ */
+
 function slog_admin_menu() {
 	if ( oik_require_lib( "oik-admin" ) ) {
 		$hook=add_options_page( "Slog admin", "Slog admin", "manage_options", "slog", "slog_admin_page" );
+	} else {
+		//bw_trace2( "Slog admin not possible");
 	}
 }
 
@@ -81,10 +92,13 @@ function slog_admin_menu() {
  * - Form
  * - Chart
  * - CSV Table
+ * In whatever order seems most appropriate.
  */
 
 function slog_admin_page() {
 	BW_::oik_menu_header( __( "Slog", "slog" ), "w70pc" );
+
+
 	BW_::oik_box( null, null, __( "Form", "slog" ) , "slog_admin_form" );
 	BW_::oik_box( null, null, __( "Chart", "slog" ), "slog_admin_chart" );
 	BW_::oik_box( null, null, __( "CSV table", "slog" ), "slog_admin_table" );
@@ -210,7 +224,7 @@ function slog_admin_display_options() {
  */
 
 function slog_admin_chart() {
-
+	slog_enable_autoload();
 	BW_::p("Admin chart");
 	$atts = slog_admin_chart_atts();
 	$content = slog_admin_chart_content();
@@ -222,6 +236,7 @@ function slog_admin_chart() {
 
 	} else {
 		BW_::p( 'Install and activate pompey-chart');
+		echo 'Install and activate pompey-chart';
 	}
 	bw_flush();
 }
@@ -237,9 +252,35 @@ function slog_admin_chart_atts() {
 	return $atts;
 }
 
+/**
+ * Enables autoload processing using shared library classes.
+ *
+ */
+function slog_enable_autoload() {
+	$lib_autoload = oik_require_lib( 'oik-autoload');
+	if ( $lib_autoload && !is_wp_error( $lib_autoload ) ) {
+		oik_autoload( true );
+	} else {
+		BW_::p( "oik-autoload library not loaded");
+	}
+}
+
 function slog_admin_chart_content() {
 	$options = get_option( 'slog_options');
-	oik_require( 'class-slog-reporter.php', 'slog' );
+
+	// Can we enable autoload processing here?
+	// What's the benefit?
+	$lib_autoload =oik_require_lib( 'oik-autoload');
+	if ( $lib_autoload && !is_wp_error( $lib_autoload ) ) {
+		oik_autoload();
+	} else {
+		BW_::p( "oik-autoload library not loaded");
+
+
+	}
+	bw_flush();
+
+	//oik_require( 'class-slog-reporter.php', 'slog' );
 	$slogger = slog_admin_slog_reporter();
 	$content = $slogger->run_report( $options );
 	//slog_getset_content( $content);
