@@ -9,8 +9,8 @@
 //ini_set('memory_limit','1572M');
 
 $plugin = "wp-top12";
-oik_require( "libs/class-vt-stats.php", $plugin );
-oik_require( "libs/class-vt-row-basic.php", $plugin );
+//oik_require( "libs/class-vt-stats.php",  );
+//oik_require( "libs/class-vt-row-basic.php", $plugin );
 oik_require( "libs/class-object-sorter.php", $plugin );
 oik_require( "libs/class-object.php", $plugin );
 oik_require( "libs/class-object-grouper.php", $plugin );

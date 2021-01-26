@@ -39,8 +39,8 @@ slog_loaded();
  * This plugin is only run under the command line.
  */
 function slog_loaded() {
-	add_action( 'init', 'slog_init', 11 );
-	add_action( 'admin_menu', 'slog_admin_menu', 11 );
+	add_action( 'init', 'slog_init', 21 );
+	add_action( 'admin_menu', 'slog_admin_menu', 21 );
 	add_action( 'admin_enqueue_scripts', 'slog_admin_enqueue_scripts' );
 }
 
@@ -63,6 +63,7 @@ function slog_init() {
 	}
 	$libs = oik_lib_fallback( dirname( __FILE__ ) . '/libs' );
 	//print_r( $libs );
+	do_action( 'slog_loaded');
 
 
 
@@ -70,7 +71,9 @@ function slog_init() {
 }
 
 function slog_admin_enqueue_scripts() {
-	if ( function_exists( 'pompey_chart_enqueue_scripts') ) {
+	if ( function_exists( 'sb_chart_block_enqueue_scripts') ) {
+		sb_chart_block_enqueue_scripts();
+	} elseif ( function_exists( 'pompey_chart_enqueue_scripts') ) {
 		pompey_chart_enqueue_scripts();
 	}
 }
@@ -96,7 +99,7 @@ function slog_admin_menu() {
  */
 
 function slog_admin_page() {
-	BW_::oik_menu_header( __( "Slog", "slog" ), "w70pc" );
+	BW_::oik_menu_header( __( "Slog", "slog" ), 'w100pc' );
 
 
 	BW_::oik_box( null, null, __( "Form", "slog" ) , "slog_admin_form" );
@@ -228,15 +231,19 @@ function slog_admin_chart() {
 	BW_::p("Admin chart");
 	$atts = slog_admin_chart_atts();
 	$content = slog_admin_chart_content();
-	if ( function_exists( 'pompey_chart_chart_shortcode') ) {
+	if ( function_exists( 'sb_chart_block_shortcode') ) {
+		//sb_chart_block_shortcode( $atts, $content );
+		$output = sb_chart_block_shortcode( $atts, $content, 'chartjs');
+		e( $output );
+	} elseif ( function_exists( 'pompey_chart_chart_shortcode') ) {
 		//pompey_chart_enqueue_scripts();
 		//$atts = slog_admin_chart_atts();
 		//$content = slog_admin_chart_content();
 		slog_admin_chart_display( $atts, $content );
 
 	} else {
-		BW_::p( 'Install and activate pompey-chart');
-		echo 'Install and activate pompey-chart';
+		BW_::p( 'Install and activate sb-chart-block or pompey-chart');
+		echo 'Install and activate sb-chart-block or pompey-chart';
 	}
 	bw_flush();
 }
@@ -257,6 +264,7 @@ function slog_admin_chart_atts() {
  *
  */
 function slog_enable_autoload() {
+
 	$lib_autoload = oik_require_lib( 'oik-autoload');
 	if ( $lib_autoload && !is_wp_error( $lib_autoload ) ) {
 		oik_autoload( true );

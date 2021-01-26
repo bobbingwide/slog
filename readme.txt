@@ -42,12 +42,11 @@ wp-top12 provides more
 
 plugin    | file         | purpose
 --------- | ------------ | ----------
-
-
 wp-top12  | getvt.php    | Download bwtrace.vt.mmdd files for post processing
 wp-top12  | vt-stats.php | Summarise stats for a date range
 wp-top12  | vt-top12.php | Perform performance analysis comparing multiple log files
-wp-top12  | vt-driver.php  
+wp-top12  | vt-driver.php  |
+
 
 Note: vt comes from the bwtrace.vt.mmdd filename which is so named since it records
 value text pairs ( see bw_trace_vt() ).
