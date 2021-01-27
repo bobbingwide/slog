@@ -635,27 +635,54 @@
 	  * @return bool
 	  *
 	  */
-
 	function is_filter_request_type( $request_type) {
-		$types = [ 'GET-FE' => false, 'GET-BOT-FE' => true ];
+		$types = [ 'GET-FE' => true, 'GET-BOT-FE' => true ];
 ;		$filter = bw_array_get( $types, $request_type, false);
 		return $filter;
 	}
 
+	 /**
+	  * Extra logic to detect spammy requests.
+	  *
+	  * @param $uri
+	  *
+	  *
+	  * @return bool
+	  */
+	function probably_not_spam( $uri ) {
+		$continue = false === strpos( $uri, '/-/' );
+		$continue &= false === strpos( $uri, 'wordfence');
+		$continue &= false === strpos( $uri, 'wp-content');
+		return $continue;
+	}
+
+	 /**
+	  * Filters the file to remove things we don't want in the driver.
+	  *
+	  * - Choose the request type: GET-FE or GET-BOT-FE
+	  * - No action parameter
+	  * - No wp-content requests
+	  * - No weird spammy requests.
+	  * - No wordfence_lh
+	  * - Less than 10 seconds elapsed
+	  */
 	 function filter() {
-		 $this->narrator->narrate( "Filtering", count(  $this->rows ) );
-		 $this->filtered = [];
+		$this->narrator->narrate( "Filtering", count(  $this->rows ) );
+		$this->filtered = [];
 		foreach ( $this->rows as $index => $row ) {
 			//print_r( $row );
-			if (  $this->is_filter_request_type( $row->request_type ) ) {
-				if ( '' === $row->action  ) {
-					if ( $row->elapsed < 10 ) {
-						$this->filtered[] = $index;
+			$continue = $this->is_filter_request_type( $row->request_type );
+			$continue &= '' === $row->action;
+			$continue &= $this->probably_not_spam( $row->uri );
+			$continue &= $row->elapsed < 10;
+			if ( $continue ) {
+				$this->filtered[] = $index;
+			} else {
+				if ( $row->elapsed >= 10 ) {
 
-					} else {
-						$this->narrator->narrate( "Elapsed", $row->elapsed);
-						$this->narrator->narrate( "URI", $row->uri);
-					}
+					$this->narrator->narrate( "Elapsed", $row->elapsed );
+					$this->narrator->narrate( "URI", $row->uri );
+					$this->narrator->narrate( '<br />', null);
 				}
 			}
 		}

@@ -41,17 +41,19 @@ class Narrator {
      * @param string|array $value
      */
     function narrate( $label, $value ) {
-        $narration = $this->nesting();
-        $narration .= $label;
-        $narration .= ": ";
-        if ( is_array( $value ) ) {
-        	$narration .= implode( ',', $value );
-        } else {
-	        $narration.=$value;
-        }
-        $narration .=  PHP_EOL;
-        echo $narration;
-    }
+		$narration = $this->nesting();
+		$narration .= $label;
+		if ( $value ) {
+			$narration.=": ";
+			if ( is_array( $value ) ) {
+				$narration.=implode( ',', $value );
+			} else {
+				$narration.=$value;
+			}
+		}
+		$narration .=  PHP_EOL;
+		echo $narration;
+	}
 
     function nesting()  {
         return str_repeat( '   ', $this->nested );
