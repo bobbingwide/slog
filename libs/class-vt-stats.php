@@ -566,7 +566,9 @@
 	  * @return string
 	  */
 	 function run_elapsed_report() {
+	 	$this->grouper->reset();
 		 $this->grouper->time_field('final');
+		 $this->grouper->init_groups( array( $this, "twentiethsecond" ), 0, 0.05, 6.0 );
 		 $this->grouper->groupby( "final", array( $this, "twentiethsecond" ) );
 		 $this->grouper->ksort();
 		 $this->grouper->having( array( $this, "having_filter_value_ge" ) );
@@ -625,14 +627,27 @@
 		return $content;
 	}
 
+	 /**
+	  * Filters on request_type.
+	  *
+	  * @TODO Replace hard coded logic
+	  * @param $request_type
+	  * @return bool
+	  *
+	  */
 
+	function is_filter_request_type( $request_type) {
+		$types = [ 'GET-FE' => false, 'GET-BOT-FE' => true ];
+;		$filter = bw_array_get( $types, $request_type, false);
+		return $filter;
+	}
 
 	 function filter() {
 		 $this->narrator->narrate( "Filtering", count(  $this->rows ) );
 		 $this->filtered = [];
 		foreach ( $this->rows as $index => $row ) {
 			//print_r( $row );
-			if ( 'GET-FE' === $row->request_type ) {
+			if (  $this->is_filter_request_type( $row->request_type ) ) {
 				if ( '' === $row->action  ) {
 					if ( $row->elapsed < 10 ) {
 						$this->filtered[] = $index;
