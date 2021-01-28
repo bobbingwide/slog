@@ -141,12 +141,14 @@ function slog_admin_form() {
 	stag( 'table', 'form-table' );
 	bw_flush();
 	settings_fields('slog_options_options');
-
+	$dir = slog_admin_get_trace_files_directory();
+	$file_options = slog_admin_get_file_list( $dir );
 	$report_options = slog_admin_report_options();
 	$type_options = slog_admin_type_options();
 	$display_options = slog_admin_display_options();
+	BW_::bw_select_arr( 'slog_options', __('Trace summary file'), $options, 'file', array( '#options' => $file_options ) );
 
-	BW_::bw_textfield_arr( 'slog_options', __( 'File', 'slog' ), $options, 'file', 60 );
+	//BW_::bw_textfield_arr( 'slog_options', __( 'File', 'slog' ), $options, 'file', 60 );
 	BW_::bw_select_arr( 'slog_options', __( 'Report type', 'slog' ), $options, 'report', array( "#options" => $report_options ) );
 	BW_::bw_select_arr( 'slog_options', __( 'Chart type', 'slog' ), $options, 'type', array( "#options" => $type_options ) );
 	BW_::bw_select_arr( 'slog_options', __( "Display", 'slog' ), $options, 'display', array( "#options" => $display_options ) );
@@ -156,6 +158,33 @@ function slog_admin_form() {
 	BW_::p( isubmit( "ok", __( "Save and run", 'slog' ), null, "button-primary" ) );
 	etag( "form" );
 	bw_flush();
+}
+
+/**
+ *
+ * @TODO Autoload the trace classes from oik-bwtrace/includes
+ * @return null
+ */
+function slog_admin_get_trace_files_directory() {
+	oik_require( "includes/class-trace-logs.php", "oik-bwtrace" );
+	$trace_logs = new trace_logs();
+	$fq_trace_files_directory = $trace_logs->get_fq_trace_files_directory();
+	echo $fq_trace_files_directory;
+	return $fq_trace_files_directory;
+}
+
+function slog_admin_get_file_list( $dir ) {
+	$file_options = [];
+	// Use the daily trace summary report directory.
+	// @TODO Use the daily trace report file prefix too
+	$files = glob(  $dir . 'bwtrace.vt.*' );
+	foreach ( $files as $file ) {
+		$basename = basename( $file );
+		$file_options[$file] = $basename;
+	}
+	//rsort( $file_options );
+	//print_r( $files );
+	return $file_options;
 }
 
 /**
