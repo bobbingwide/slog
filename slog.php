@@ -198,6 +198,7 @@ function slog_admin_get_file_list( $dir ) {
 function slog_admin_type_options() {
 	$types  = [ 'line' => __( "Line", 'slog' ),
 		'bar' => __( 'Bar', 'slog' ),
+		'horizontalBar' => __( 'Horizontal bar', 'slog'),
 		'pie' => __( 'Pie', 'slog' )
 		];
 	return $types;
@@ -264,15 +265,9 @@ function slog_admin_chart() {
 		//sb_chart_block_shortcode( $atts, $content );
 		$output = sb_chart_block_shortcode( $atts, $content, 'chartjs');
 		e( $output );
-	} elseif ( function_exists( 'pompey_chart_chart_shortcode') ) {
-		//pompey_chart_enqueue_scripts();
-		//$atts = slog_admin_chart_atts();
-		//$content = slog_admin_chart_content();
-		slog_admin_chart_display( $atts, $content );
-
 	} else {
-		BW_::p( 'Install and activate sb-chart-block or pompey-chart');
-		echo 'Install and activate sb-chart-block or pompey-chart';
+		BW_::p( 'Install and activate sb-chart-block');
+		echo 'Install and activate sb-chart-block';
 	}
 	bw_flush();
 }
@@ -333,13 +328,8 @@ function slog_admin_slog_reporter( ) {
 	return $slogger;
 }
 
-function slog_admin_chart_display( $atts, $content ) {
-	$output = pompey_chart_chart_shortcode( $atts, $content, 'chart');
-	e( $output );
-}
-
 function slog_admin_table() {
-	BW_::p( "Table" );
+	//BW_::p( "Table" );
 	$slogger=slog_admin_slog_reporter();
 	$content=$slogger->fetch_table();
 	slog_admin_display_table( $content );
