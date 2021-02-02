@@ -4,7 +4,7 @@
 Plugin Name: slog
 Plugin URI: https://www.bobbingwide.com/oik-plugins/slog
 Description: Post process oik-bwtrace daily trace summary reports
-Version: 1.0.0
+Version: 1.1.0
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com/about-bobbing-wide
 Text Domain: slog
