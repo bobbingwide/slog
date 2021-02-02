@@ -111,9 +111,7 @@ function slog_admin_page() {
 
 
 /**
- * Register bw_trace_options
- *
- * Init plugin options to white list our options
+ * Register slog_options
  *
  */
 function slog_options_init(){
@@ -141,8 +139,7 @@ function slog_admin_form() {
 	stag( 'table', 'form-table' );
 	bw_flush();
 	settings_fields('slog_options_options');
-	$dir = slog_admin_get_trace_files_directory();
-	$file_options = slog_admin_get_file_list( $dir );
+	$file_options = slog_admin_file_options();
 	$report_options = slog_admin_report_options();
 	$type_options = slog_admin_type_options();
 	$display_options = slog_admin_display_options();
@@ -169,15 +166,15 @@ function slog_admin_get_trace_files_directory() {
 	oik_require( "includes/class-trace-logs.php", "oik-bwtrace" );
 	$trace_logs = new trace_logs();
 	$fq_trace_files_directory = $trace_logs->get_fq_trace_files_directory();
-	echo $fq_trace_files_directory;
+	//echo $fq_trace_files_directory;
 	return $fq_trace_files_directory;
 }
 
-function slog_admin_get_file_list( $dir ) {
+function slog_admin_get_file_list( $dir, $mask ) {
 	$file_options = [];
 	// Use the daily trace summary report directory.
 	// @TODO Use the daily trace report file prefix too
-	$files = glob(  $dir . 'bwtrace.vt.*' );
+	$files = glob(  $dir . $mask );
 	foreach ( $files as $file ) {
 		$basename = basename( $file );
 		$file_options[$file] = $basename;
@@ -187,6 +184,40 @@ function slog_admin_get_file_list( $dir ) {
 	return $file_options;
 }
 
+/**
+ *
+ */
+function slog_admin_get_trace_summary_prefix() {
+	$prefix = 'bwtrace.vt';
+	//get_summary_file_prefix()
+	return $prefix;
+}
+
+/**
+ * Lists the daily trace summary files that may be analysed.
+ *
+ * Files can either be the local daily trace summary files, matching the current value for the summary file prefix
+ * or the downloaded / filtered files
+ */
+function slog_admin_file_options() {
+	$dir = slog_admin_get_trace_files_directory();
+	$prefix = slog_admin_get_trace_summary_prefix();
+	$mask = $prefix . '*';
+	//$mask = <input type="text" size="60" name="bw_summary_options[summary_file]" id="bw_summary_options[summary_file]" value="cwiccer" class="">
+	//echo $dir;
+	$trace_summary_files = slog_admin_get_file_list( $dir, $mask );
+	$slog_bloat_dir = bobbcomp::bw_get_option( '_slog_downloads_dir', 'slog_bloat_options' );
+	if ( $slog_bloat_dir ) {
+		//echo $slog_bloat_dir;
+		$slog_bloat_dir = trailingslashit( $slog_bloat_dir );
+		$slog_bloat_files=slog_admin_get_file_list( $slog_bloat_dir, '*.*' );
+	//print_r( $slog_bloat_files);
+	} else {
+		$slog_bloat_files = [];
+	}
+	$file_options = array_merge( $trace_summary_files, $slog_bloat_files );
+	return $file_options;
+}
 /**
  * Lists the available Chart types.
  *
@@ -267,7 +298,7 @@ function slog_admin_chart() {
 		e( $output );
 	} else {
 		BW_::p( 'Install and activate sb-chart-block');
-		echo 'Install and activate sb-chart-block';
+		//echo 'Install and activate sb-chart-block';
 	}
 	bw_flush();
 }
