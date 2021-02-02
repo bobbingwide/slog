@@ -64,6 +64,16 @@
 	 public $contents;
 
 	 /**
+	  * Associative array of request type filters
+	  * key request type eg GET-FE, GET-BOT-FE
+	  * value on/off true/false
+	  *
+	  * @var
+	  */
+	 public $request_type_filters;
+	 public $http_response_filters;
+
+	 /**
 	  * Construct the source information for VT_stats
 	  */
 	 function __construct() {
@@ -73,8 +83,6 @@
 		 $this->rows=array();
 		 //$this->populate();
 		 $this->narrator=Narrator::instance();
-
-
 	 }
 
 	 /**
@@ -84,7 +92,6 @@
 	  *
 	  * @param null $file
 	  */
-
 	 function set_file( $file=null ) {
 	 	$this->file = $file;
 	 }
@@ -627,19 +634,51 @@
 		return $content;
 	}
 
+	function set_request_type_filters( $filters ) {
+		$filters = bw_assoc( $filters);
+		$this->request_type_filters = $filters;
+		//print_r( $filters );
+	}
+
+	 function set_http_response_filters( $filters ) {
+		 $filters = bw_assoc( $filters);
+		 $this->http_response_filters = $filters;
+		 //print_r( $filters );
+	 }
+
 	 /**
 	  * Filters on request_type.
 	  *
-	  * @TODO Replace hard coded logic
 	  * @param $request_type
 	  * @return bool
 	  *
 	  */
 	function is_filter_request_type( $request_type) {
-		$types = [ 'GET-FE' => true, 'GET-BOT-FE' => true ];
-;		$filter = bw_array_get( $types, $request_type, false);
+		//$types = [ 'GET-FE' => true, 'GET-BOT-FE' => true ];
+		//print_r( $this->request_type_filters );
+		$filter = bw_array_get( $this->request_type_filters, $request_type, false);
+		if ( $filter ) {
+			$filter = true;
+		}
 		return $filter;
 	}
+
+	 /**
+	  * Filters on http_response.
+	  *
+	  * @param $http_response
+	  * @return bool
+	  */
+	 function is_filter_http_response( $http_response ) {
+		 $filter = bw_array_get( $this->http_response_filters, $http_response, false);
+		 if ( $filter ) {
+			 $filter = true;
+		 }
+		 return $filter;
+	 }
+
+
+
 
 	 /**
 	  * Extra logic to detect spammy requests.
@@ -672,6 +711,7 @@
 		foreach ( $this->rows as $index => $row ) {
 			//print_r( $row );
 			$continue = $this->is_filter_request_type( $row->request_type );
+			$continue &= $this->is_filter_http_response( $row->http_response );
 			$continue &= '' === $row->action;
 			$continue &= $this->probably_not_spam( $row->uri );
 			$continue &= $row->elapsed < 10;
