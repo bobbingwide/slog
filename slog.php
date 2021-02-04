@@ -345,6 +345,29 @@ function slog_admin_chart_content() {
 
 	//oik_require( 'class-slog-reporter.php', 'slog' );
 	$slogger = slog_admin_slog_reporter();
+	$slog_bloat_options = get_option( 'slog_bloat_options');
+	/*
+	print_r( $slog_bloat_options );
+
+	 * Array ( [_slog_remote_url] => https://cwiccer.com
+	 * [_slog_downloads_dir] => C:/backups-SB/cwiccer.com/bwtrace
+	 * [_slog_filter_rows] => 0
+	 * [_slog_request_filters] => Array ( [0] => GET-FE [1] => GET-BOT-FE [2] => GET-CLI-FE [3] => GET-ADMIN [4] => GET-BOT-ADMIN [5] => GET-AJAX [6] => GET-BOT-AJAX [7] => GET-REST [8] => GET-CLI [9] => GET-spam [10] => HEAD-FE [11] => POST-FE [12] => POST-BOT-FE [13] => POST-CLI-FE [14] => POST-ADMIN [15] => POST-AJAX [16] => POST-REST [17] => POST-CLI [18] => POST-spam ) )
+	 */
+	if ( $slog_bloat_options ) {
+		$options['filter'] = $slog_bloat_options['_slog_filter_rows'];
+		if ( $options['filter']) {
+			p( "Filtering: " . implode( ',', $slog_bloat_options['_slog_request_filters'] ) );
+			$slogger->set_request_type_filters( $slog_bloat_options['_slog_request_filters'] );
+			$slogger->set_http_response_filters( [ '200', 'xxx' ] );
+		}
+
+	} else {
+
+		$options['filter'] = false;
+	}
+
+
 	$content = $slogger->run_report( $options );
 	//slog_getset_content( $content);
 	//$content = "A,B,C\n1,2,3\n4,5,6";
@@ -355,6 +378,9 @@ function slog_admin_slog_reporter( ) {
 	static $slogger = null;
 	if ( !$slogger ) {
 		$slogger = new Slog_Reporter();
+	}
+	if ( !$slogger ) {
+		p( "Can't load Slog_Reporter");
 	}
 	return $slogger;
 }

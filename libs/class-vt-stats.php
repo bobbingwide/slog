@@ -5,9 +5,8 @@
 
  * @package wp-top12 / slog
  *
- * Statistics for ccyymmdd.vt files
- *
- *
+ * Statistics for oik-bwtrace daily trace summary files
+ * prefix.ccyymmdd[.blogid]
  *
  */
  class VT_stats {
@@ -64,6 +63,11 @@
 	 public $contents;
 
 	 /**
+	  * @var bool $filter_rows
+	  */
+	 public $filter_rows;
+
+	 /**
 	  * Associative array of request type filters
 	  * key request type eg GET-FE, GET-BOT-FE
 	  * value on/off true/false
@@ -83,6 +87,7 @@
 		 $this->rows=array();
 		 //$this->populate();
 		 $this->narrator=Narrator::instance();
+		 $this->filter_rows = false;
 	 }
 
 	 /**
@@ -206,16 +211,29 @@
 	  * Populate rows for the given date.
 	  */
 	 function load_file() {
-	 	$date = $this->date;
+	    $date = $this->date;
 		$file = $this->get_file();
-		 unset( $this->contents );
+	    unset( $this->contents );
 
 		 $this->contents=file( $file );
-		 $this->narrator->narrate( 'Date', $date );
-		 $this->narrator->narrate( "Count", count( $this->contents ) );
-		 foreach ( $this->contents as $line ) {
-			 $this->rows[]=new VT_row_basic( $line );
+		 if ( $date ) {
+			 $this->narrator->narrate( 'Date', $date );
 		 }
+		 $this->narrator->narrate( "Count", count( $this->contents ) );
+
+		 /**
+		  * We need to load all the rows in order to apply filtering logic
+		  * But when should we apply the filtering logic; immediately or later?
+		  * If makes more sense to do it immediately - a bit less memory.
+		  */
+		 foreach ( $this->contents as $line ) {
+		 	$row = new VT_row_basic( $line );
+		 	if ( $this->row_required( $row ) ) {
+			    $this->rows[]=$row;
+		    }
+		 }
+
+		 $this->narrator->narrate( 'Rows loaded', count( $this->rows) );
 
 
 	 }
@@ -517,6 +535,10 @@
 	  * The output is saved in $this->grouper
 	  */
     function run_report() {
+
+	    //$this->set_request_type_filters( ['GET-FE'] );
+	    /** Hardcoded for now. xxx represents unknown */
+	    //$this->set_http_response_filters( ['200', 'xxx']);
 	    $this->load_file();
 	    $this->populate_grouper();
     	$report_method = $this->get_report_method();
@@ -634,6 +656,10 @@
 		return $content;
 	}
 
+	function set_filter_rows( $filter ) {
+		$this->filter_rows = $filter;
+	}
+
 	function set_request_type_filters( $filters ) {
 		$filters = bw_assoc( $filters);
 		$this->request_type_filters = $filters;
@@ -656,6 +682,7 @@
 	function is_filter_request_type( $request_type) {
 		//$types = [ 'GET-FE' => true, 'GET-BOT-FE' => true ];
 		//print_r( $this->request_type_filters );
+		//$this->narrator->narrate( 'Request type', $request_type );
 		$filter = bw_array_get( $this->request_type_filters, $request_type, false);
 		if ( $filter ) {
 			$filter = true;
@@ -670,10 +697,15 @@
 	  * @return bool
 	  */
 	 function is_filter_http_response( $http_response ) {
+	 	 //echo $http_response;
+	 	 //echo "RF:";
+	 	 //print_r( $this->http_response_filters );
 		 $filter = bw_array_get( $this->http_response_filters, $http_response, false);
 		 if ( $filter ) {
 			 $filter = true;
 		 }
+		// echo $filter;
+		 //echo ';';
 		 return $filter;
 	 }
 
@@ -710,11 +742,14 @@
 		$this->filtered = [];
 		foreach ( $this->rows as $index => $row ) {
 			//print_r( $row );
+			$continue = $this->row_required( $row );
+			/*
 			$continue = $this->is_filter_request_type( $row->request_type );
 			$continue &= $this->is_filter_http_response( $row->http_response );
 			$continue &= '' === $row->action;
 			$continue &= $this->probably_not_spam( $row->uri );
 			$continue &= $row->elapsed < 10;
+			*/
 			if ( $continue ) {
 				$this->filtered[] = $index;
 			} else {
@@ -729,6 +764,34 @@
 		$this->narrator->narrate( 'Filtered', count( $this->filtered ) );
     }
 
+    function row_required( $row ) {
+	 	$continue = true;
+	 	if ( $this->filter_rows ) {
+		    $continue=$this->is_filter_request_type( $row->request_type );
+		    //$this->narrator->narrate( "continue request type", $continue );
+		    $continue&=$this->is_filter_http_response( $row->http_response );
+		    //$this->narrator->narrate( "continue http", $continue );
+		    //$this->narrator->narrate( 'Action' , $row->action . '@' );
+		    $continue&=  empty( $row->action );
+		    //$this->narrator->narrate( "continue action", $continue );
+		    $continue&=$this->probably_not_spam( $row->uri );
+		    //$this->narrator->narrate( "continue spam", $continue );
+		    //$this->narrator->narrate( "Elapsed", $row->elapsed );
+		    $continue&=$row->elapsed < 10;
+		    ///$this->narrator->narrate( "continue elapsed", $continue );
+		    //$this->narrator->narrate( '<br />', null );
+	    }
+	 	/*
+	 	if ( $continue ) {
+	 		echo "cont";
+	    } else {
+	 		echo "ignored";
+	    }
+	    $this->narrator->narrate( "continue", $continue );
+	 	*/
+	    return $continue;
+    }
+
     function write_filtered( $filename ) {
 		$output = '';
 		//print_r( $this->filtered);
@@ -741,6 +804,26 @@
 		$this->narrator->narrate( 'Wrote bytes', $written );
 
     }
+
+    function get_filtered( ) {
+	 	//$this->file = $this->contents;
+		$filtered_contents = [];
+	    foreach ( $this->filtered as $key => $filtered ) {
+	    	$filtered_contents[] = $this->contents[ $filtered ];
+	    }
+	    //print_r( $this->filtered );
+	 	//print_r( $this->contents );
+	 	return $filtered_contents;
+    }
+
+	 function get_filtered_rows( ) {
+		 //$this->file = $this->contents;
+		 $filtered_rows = [];
+		 foreach ( $this->filtered as $key => $filtered ) {
+			 $filtered_rows[] = $this->rows[ $filtered ];
+		 }
+		 print_r( $this->filtered_rows );
+		 //print_r( $this->contents );
+		 return $filtered_rows;
+	 }
 }
-
-
