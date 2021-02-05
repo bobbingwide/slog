@@ -5,7 +5,7 @@
 * Tags: shortcodes, smart, lazy
 * Requires at least: 5.6
 * Tested up to: 5.6
-* Stable tag: 1.1.0
+* Stable tag: 1.1.1
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,6 +62,9 @@ It is still a bespoke version for use by Herb Miller on bobbingwide, oik-plugins
 1. slog in action
 
 ## Upgrade Notice 
+# 1.1.1 
+Update for automatic filtering, if required.
+
 # 1.1.0 
 Upgrade for Horizontal bar charts and other improvements related to slog-bloat.
 
@@ -72,6 +75,10 @@ Now supports source trace summary files with date format yyyymmdd or mmdd
 New plugin, available from oik-plugins and GitHub
 
 ## Changelog 
+# 1.1.1 
+* Changed: Apply slog bloat automatic filters if required,https://github.com/bobbingwide/slog-bloat/issues/3
+* Fixed: Avoid Warning when running Elapsed report against badly formed records,https://github.com/bobbingwide/slog/issues/15
+
 # 1.1.0 
 * Added: Add Horizontal bar chart. Remove pompey_chart logic,https://github.com/bobbingwide/slog/issues/13
 * Changed: Extend slog's file list to include files in slog-bloat's download directory,https://github.com/bobbingwide/slog-bloat/issues/4
