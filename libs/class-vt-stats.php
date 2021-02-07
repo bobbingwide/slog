@@ -471,6 +471,9 @@
 		 //$grouper->populate( $this->rows );
 
 		 $grouper = $this->populate_grouper();
+		 if ( !$grouper) {
+		 	return;
+		 }
 
 		 $grouper->subset( null );
 		 $grouper->groupby( "request_type" ); // Stripped URI
@@ -500,6 +503,9 @@
 
 	 function populate_grouper() {
 		 //$grouper=new Object_Grouper();
+		 if ( 0 === count( $this->rows )) {
+		 	return null;
+		 }
 		 if ( !$this->grouper ) {
 			 $this->grouper =new Object_Grouper();
 		 }
@@ -540,7 +546,11 @@
 	    /** Hardcoded for now. xxx represents unknown */
 	    //$this->set_http_response_filters( ['200', 'xxx']);
 	    $this->load_file();
-	    $this->populate_grouper();
+	    if ( 0 === count( $this->rows )) {
+	    	$content = null;
+	    	return $content;
+	    }
+	    $grouper = $this->populate_grouper();
     	$report_method = $this->get_report_method();
     	if ( method_exists( $this, $report_method ) ) {
     		$content = $this->$report_method();
@@ -572,6 +582,7 @@
 	  *
 	  */
 	 function run_request_types_report() {
+
 		 $this->grouper->subset( null );
 		 $this->grouper->time_field( 'final' );
 		 $this->grouper->groupby( "request_type" );
@@ -648,6 +659,9 @@
 	  */
 
 	function fetch_table() {
+		if ( !$this->grouper ) {
+			return null;
+		}
 		$this->narrator->narrate( 'Report', $this->report );
 		$content = slog_admin_report_options()[ $this->report];
 		$content .= ',Count,Total elapsed,Average,Percentage count,Percentage elapsed,Accumulated count,Accumulated percentage';

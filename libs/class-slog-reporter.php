@@ -105,7 +105,8 @@ class Slog_Reporter {
 		$this->display = $options['display'];
 		$this->having = $options['having'];
 		$this->filter = $options['filter'];
-		$this->validate_file();
+		//$this->validate_file();
+
 	}
 
 	public function validate_file() {
