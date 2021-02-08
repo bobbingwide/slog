@@ -113,8 +113,9 @@
 	 	return $file_name;
 	 }
 
-	 function set_report( $report ) {
+	 function set_report( $report, $report_title=null ) {
 	 	$this->report = $report;
+	 	$this->report_title = $report_title ? $report_title : $report;
 	 }
 
 	/**
@@ -644,7 +645,7 @@
 	 */
 	function fetch_content() {
 		$this->narrator->narrate( 'Display', $this->display );
-		$content = slog_admin_report_options()[ $this->report];
+		$content = $this->report_title;
 		$content .= ',';
 		$content .= $this->display;
 		$content .= "\n";
@@ -663,7 +664,7 @@
 			return null;
 		}
 		$this->narrator->narrate( 'Report', $this->report );
-		$content = slog_admin_report_options()[ $this->report];
+		$content = $this->report_title;
 		$content .= ',Count,Total elapsed,Average,Percentage count,Percentage elapsed,Accumulated count,Accumulated percentage';
 		$content .= "\n";
 		$content .= $this->grouper->asCSV_table();

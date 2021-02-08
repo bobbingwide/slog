@@ -75,7 +75,7 @@ class Slog_Reporter {
 		if ( $this->validate_file() ) {
 			$this->stats = new VT_stats();
 			$this->stats->set_file( $this->file );
-			$this->stats->set_report( $this->report );
+			$this->stats->set_report( $this->report, $this->report_title );
 			$this->stats->set_display( $this->display );
 			if ( $this->having ) {
 				$this->stats->set_having( $this->having );
@@ -101,6 +101,7 @@ class Slog_Reporter {
 	public function parse_options( $options ) {
 		$this->file = $options['file'];
 		$this->report = $options['report'];
+		$this->report_title = $options['report_title'];
 		$this->type = $options['type'];	// We probably don't need this.
 		$this->display = $options['display'];
 		$this->having = $options['having'];
