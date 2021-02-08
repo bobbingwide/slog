@@ -5,7 +5,7 @@
 * Tags: shortcodes, smart, lazy
 * Requires at least: 5.6
 * Tested up to: 5.6
-* Stable tag: 1.1.2
+* Stable tag: 1.1.3
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,6 +62,9 @@ It is still a bespoke version for use by Herb Miller on bobbingwide, oik-plugins
 1. slog in action
 
 ## Upgrade Notice 
+# 1.1.3 
+Improved the Report title.
+
 # 1.1.2 
 Update for improved resilience.
 
@@ -78,6 +81,9 @@ Now supports source trace summary files with date format yyyymmdd or mmdd
 New plugin, available from oik-plugins and GitHub
 
 ## Changelog 
+# 1.1.3 
+* Changed: Updated the Report title display.
+
 # 1.1.2 
 * Changed: Don't run reports when the selected file is missing or there are 0 loaded rows,https://github.com/bobbingwide/issues/11
 
