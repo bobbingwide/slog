@@ -1,43 +1,91 @@
 # slog 
 ![banner](https://raw.githubusercontent.com/bobbingwide/slog/master/assets/slog-banner-772x250.jpg)
 * Contributors: bobbingwide, vsgloik
-* Donate link: http://www.oik-plugins.com/oik/oik-donate/
-* Tags: shortcodes, smart, lazy
+* Donate link: https://www.oik-plugins.com/oik/oik-donate/
+* Tags: trace, summary, performance, analysis
 * Requires at least: 5.6
-* Tested up to: 5.6
-* Stable tag: 1.1.3
+* Tested up to: 5.6.1
+* Stable tag: 1.2.0
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 ## Description 
-oik-bwtrace daily trace summary reports.
+Analyse oik-bwtrace daily trace summary reports.
 
-slog provides some basic mechanisms to see what your site's been doing.
+Making use of oik-bwtrace's daily trace summary reports, Slog provides some mechanisms to see what your site's been doing.
 
-Use with the sb-chart-block to see the results graphically.
+Use this to determine the effect of activating / deactivating a plugin on server side performance.
+
+The Slog plugin is a generic solution to enable performance comparison
+of server responses with different server configurations.
+
+Slog-bloat admin tabs are:
+
+Function | Processing
+------- | ----------
+Reports | Produce a variety of reports for a single daily trace summary file.
+Compare | Produce comparison charts for two or more trace summary files.
+Filter | Filter a daily trace summary file.
+Download | Download a daily trace summary file from a remote host site.
+Settings | Define default/initial settings for the reports.
+
+### Reports 
+Reports - View the daily trace output grouped and summarised in a variety of ways.
+
+
+- Use the sb-chart-block plugin to visualise the data in a chart.
+- The summary data is also shown in a table.
+
+### Compare 
+Compares the output of two or more daily trace summary downloads / filtered files.
+
+Requires sb-chart-block.
+
+Use this to visualise the effect of activating / deactivating a plugin on server side performance.
+
+### Filter 
+The purpose of Filtering is to reduce a daily trace summary file to a subset of requests that allow
+better comparison of multiple files.
+
+Examples:
+- Reasonable responses < x.y secs
+- Only GET requests performed on the front-end ( FE ) by real users, not bots ( BOT ).
+- Only requests which resulted in a 200( OK ) HTTP response code.
+
+### Download 
+Use the Download tab to download a daily trace summary file.
+
+This will only work if the file is accessible to any browser.
+If the file is protected from general access, returning a 403 or otherwise, then you'll need to download the file
+by another mechanism. eg FTP or from your site's control panel.
+
+### Settings 
+Use the Settings tab to define default values to be used in the other forms.
+
+
+## Usage 
 
 - The Slog admin page is only accessible to authorised users.
 - This page is only available when oik-bwtrace is activated.
-- You can choose to run a range of reports, displaying the output in multiple forms on a chart.
-- The summary data is also shown in a table.
+- To see the results graphically you need the sb-chart-block plugin.
+
 
 ## Installation 
 1. Upload the contents of the slog plugin to the `/wp-content/plugins/slog' directory
 1. Activate the plugin
-1. Visit Settings > Slog admin to run the analyses
-
+1. Visit Settings > Slog admin Settings tab to define your defaults
 
 ## Frequently Asked Questions 
 
 # What else do I need? 
 
-* oik-bwtrace to produce the daily trace summary files in the first place
-* sb-chart-block to display the charts
+* oik-bwtrace to produce the daily trace summary files in the first place.
+* sb-chart-block to display the charts.
 
 # How do I measure the effect of changes? 
 
-Use the functionality of slog, in conjunction with slog-bloat to measure the effect
-of server changes on your website.
+Use the Compare tab to visualise the effect of changes by comparing two or more trace summary files created with
+different configurations.
 
 # Does it work on WordPress Multi Site? 
 
@@ -45,23 +93,38 @@ of server changes on your website.
 - The results you get on a particular site depend on the daily trace summary prefix.
 - This defaults to `bwtrace.vt`
 
+# Does it profile an individual request? 
+
+No. If you want to profile individual requests then you will need more granular information.
+
 
 # How has it been used? 
 
-Originally developed in Herb Miller's play area to help compare performance of different hosting solutions
-it was extended at the end of 2015 during the "12 days of Christmas" analysing the effect of the top 12
-WordPress plugins on server execution time. This logic has since been moved into the wp-top12 plugin.
+- Slog was originally developed to help compare the performance of 3 different hosting solutions.
+- It was extended at the end of 2015 during the "12 days of Christmas" to analyse the effect of the top 12
+WordPress plugins on server execution time.
+- A lot of data was produced, but the charts were never published.
+- In subsequent years I compared the performance of different versions of WordPress 4.4 through 4.7
+- The recent improvements have been developed to help measure the effect of selected plugins on server side performance.
 
-slog ( not quite an abbreviation of "trace log" ) is the generalised version of the code that might enable
+slog, which is a contraction of "trace log", is the generalised version of the code that might enable
 others to perform their own analysis.
 
-It is still a bespoke version for use by Herb Miller on bobbingwide, oik-plugins and wp-a2z.
-
+For other bespoke routines to analyse daily trace summary files see the slog-bloat plugin.
 
 ## Screenshots 
-1. slog in action
+1. Slog admin > Reports tab - Form
+2. Slog admin > Reports tab - Chart
+3. Slog admin > Reports tab - Table
+4. Slog admin > Compare tab
+5. Slog admin > Download tab
+6. Slog admin > Filter tab
+7. Slog admin > Settings tab
 
 ## Upgrade Notice 
+# 1.2.0 
+Now includes logic merged from slog-bloat.
+
 # 1.1.3 
 Improved the Report title.
 
@@ -81,6 +144,9 @@ Now supports source trace summary files with date format yyyymmdd or mmdd
 New plugin, available from oik-plugins and GitHub
 
 ## Changelog 
+# 1.2.0 
+* Changed: Merged the admin page from slog-bloat,https://github.com/bobbingwide/slog/issues/16
+
 # 1.1.3 
 * Changed: Updated the Report title display.
 
