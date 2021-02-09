@@ -2,7 +2,7 @@
 
 /**
  * @copyright (C) Copyright Bobbing Wide 2015-2021
- * @package wp-top12 / slog-bloat
+ * @package wp-top12 / slog
  * CSV_merger
  *
  * Allows you to merge multiple associative arrays

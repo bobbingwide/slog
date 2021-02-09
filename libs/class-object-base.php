@@ -2,7 +2,7 @@
 
 /**
  * @copyright (C) Copyright Bobbing Wide 2015-2021
- * @package slog-bloat
+ * @package slog
  *
  * Class Object_base
  *

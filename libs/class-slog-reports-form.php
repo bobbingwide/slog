@@ -1,7 +1,7 @@
 <?php
 /**
  * @copyright (C) Copyright Bobbing Wide 2021
- * @package slog-bloat
+ * @package slog
  *
  */
 
@@ -11,7 +11,7 @@ class Slog_Reports_Form {
 	/**
 	 *
 	 */
-	private $slog_bloat_admin;
+	private $slog_admin;
 	private $file;
 	private $report;
 	private $report_title;
@@ -24,10 +24,10 @@ class Slog_Reports_Form {
 	private $continue_processing;
 
 
-	function __construct( $slog_bloat_admin ) {
-		$this->slog_bloat_admin = $slog_bloat_admin;
+	function __construct( $slog_admin ) {
+		$this->slog_admin = $slog_admin;
 		$this->set_continue_processing( false );
-		//print_r( $this->slog_bloat_admin );
+		//print_r( $this->slog_admin );
 	}
 
 	function set_continue_processing( $carry_on=true ) {
@@ -39,12 +39,12 @@ class Slog_Reports_Form {
 	}
 
 	function get_form_fields() {
-		$this->file = $this->slog_bloat_admin->get_slog_download_file();
+		$this->file = $this->slog_admin->get_slog_download_file();
 		$this->report = bw_array_get( $_REQUEST, 'report', null );
 		$this->type = bw_array_get( $_REQUEST, 'type', null );
 		$this->display = bw_array_get( $_REQUEST, 'display', null );
 		$this->having = bw_array_get( $_REQUEST, 'having', null );
-		$default_filter_rows = $this->slog_bloat_admin->get_slog_filter_rows();
+		$default_filter_rows = $this->slog_admin->get_slog_filter_rows();
 		$this->filter_rows = bw_array_get( $_REQUEST, '_slog_filter_rows', $default_filter_rows );
 	}
 
@@ -74,16 +74,16 @@ class Slog_Reports_Form {
 		$report_options = $this->get_report_options();
 		$type_options = $this->get_chart_types();
 		$display_options = $this->get_display_options();
-		BW_::bw_select( "_slog_download_file", __('Trace summary file', 'slog-bloat') , $this->file, [ '#options' => $file_options, '#optional' => true ] );
-		BW_::bw_select( "report", __( 'Report type', 'slog-bloat'), $this->report, [ '#options' => $report_options]);
-		BW_::bw_select( 'type', __( 'Chart type', 'slog-bloat' ), $this->type, [ "#options" => $type_options ] );
-		BW_::bw_select( 'display', __( 'Display', 'slog-bloat' ), $this->display, [ "#options" => $display_options ] );
+		BW_::bw_select( "_slog_download_file", __('Trace summary file', 'slog') , $this->file, [ '#options' => $file_options, '#optional' => true ] );
+		BW_::bw_select( "report", __( 'Report type', 'slog'), $this->report, [ '#options' => $report_options]);
+		BW_::bw_select( 'type', __( 'Chart type', 'slog' ), $this->type, [ "#options" => $type_options ] );
+		BW_::bw_select( 'display', __( 'Display', 'slog' ), $this->display, [ "#options" => $display_options ] );
 		BW_::bw_textfield( 'having', 10, __( 'Having', 'slog'), $this->having );
-		bw_checkbox( '_slog_filter_rows', __('Automatically filter rows', 'slog-bloat'), $this->filter_rows );
+		bw_checkbox( '_slog_filter_rows', __('Automatically filter rows', 'slog'), $this->filter_rows );
 		// @TODO Add checkbox for automatic filtering.
 		// And display of automatic filtering values.
 		etag( "table" );
-		e( isubmit( "_slog_action[_slog_reports]", __( 'Run report', 'slog-bloat' ), null ) );
+		e( isubmit( "_slog_action[_slog_reports]", __( 'Run report', 'slog' ), null ) );
 		etag( "form" );
 		bw_flush();
 
@@ -132,7 +132,7 @@ class Slog_Reports_Form {
 	 */
 	function get_slogger_options() {
 		$options = [];
-		$options['file'] = $this->slog_bloat_admin->get_slog_download_file();
+		$options['file'] = $this->slog_admin->get_slog_download_file();
 		$options['report'] = $this->report;
 		$options['report_title'] = $this->get_report_title();
 		$options['type'] = $this->type;
@@ -161,21 +161,21 @@ class Slog_Reports_Form {
 		bw_flush();
 
 		//oik_require( 'class-slog-reporter.php', 'slog' );
-		$slogger = $this->slog_bloat_admin->slog_admin_slog_reporter();
-		$slog_bloat_options = get_option( 'slog_bloat_options');
+		$slogger = $this->slog_admin->slog_admin_slog_reporter();
+		$slog_options = get_option( 'slog_options');
 		/*
-		print_r( $slog_bloat_options );
+		print_r( $slog_options );
 
 		 * Array ( [_slog_remote_url] => https://cwiccer.com
 		 * [_slog_downloads_dir] => C:/backups-SB/cwiccer.com/bwtrace
 		 * [_slog_filter_rows] => 0
 		 * [_slog_request_filters] => Array ( [0] => GET-FE [1] => GET-BOT-FE [2] => GET-CLI-FE [3] => GET-ADMIN [4] => GET-BOT-ADMIN [5] => GET-AJAX [6] => GET-BOT-AJAX [7] => GET-REST [8] => GET-CLI [9] => GET-spam [10] => HEAD-FE [11] => POST-FE [12] => POST-BOT-FE [13] => POST-CLI-FE [14] => POST-ADMIN [15] => POST-AJAX [16] => POST-REST [17] => POST-CLI [18] => POST-spam ) )
 		 */
-		if ( $slog_bloat_options ) {
+		if ( $slog_options ) {
 			$options['filter'] = $this->filter_rows;
 			if ( $options['filter']) {
-				p( "Filtering: " . implode( ',', $slog_bloat_options['_slog_request_filters'] ) );
-				$slogger->set_request_type_filters( $slog_bloat_options['_slog_request_filters'] );
+				p( "Filtering: " . implode( ',', $slog_options['_slog_request_filters'] ) );
+				$slogger->set_request_type_filters( $slog_options['_slog_request_filters'] );
 				$slogger->set_http_response_filters( [ '200', 'xxx' ] );
 			}
 
@@ -204,16 +204,16 @@ class Slog_Reports_Form {
 		//$mask = <input type="text" size="60" name="bw_summary_options[summary_file]" id="bw_summary_options[summary_file]" value="cwiccer" class="">
 		//echo $dir;
 		$trace_summary_files = $this->get_file_list( $dir, $mask );
-		$slog_bloat_dir = bobbcomp::bw_get_option( '_slog_downloads_dir', 'slog_bloat_options' );
-		if ( $slog_bloat_dir ) {
-			//echo $slog_bloat_dir;
-			$slog_bloat_dir = trailingslashit( $slog_bloat_dir );
-			$slog_bloat_files= $this->get_file_list( $slog_bloat_dir, '*.*' );
-			//print_r( $slog_bloat_files);
+		$slog_dir = bobbcomp::bw_get_option( '_slog_downloads_dir', 'slog_options' );
+		if ( $slog_dir ) {
+			//echo $slog_dir;
+			$slog_dir = trailingslashit( $slog_dir );
+			$slog_files= $this->get_file_list( $slog_dir, '*.*' );
+			//print_r( $slog_files);
 		} else {
-			$slog_bloat_files = [];
+			$slog_files = [];
 		}
-		$file_options = array_merge( $trace_summary_files, $slog_bloat_files );
+		$file_options = array_merge( $trace_summary_files, $slog_files );
 		return $file_options;
 	}
 
@@ -338,7 +338,7 @@ class Slog_Reports_Form {
 
 	function display_table() {
 		//BW_::p( "Table" );
-		$slogger=$this->slog_bloat_admin->slog_admin_slog_reporter();
+		$slogger=$this->slog_admin->slog_admin_slog_reporter();
 		if ( $slogger ) {
 			$content=$slogger->fetch_table();
 			$this->slog_admin_display_table( $content );
