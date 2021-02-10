@@ -4,7 +4,7 @@ Plugin Name: slog
 Depends: oik-bwtrace
 Plugin URI: https://www.bobbingwide.com/oik-plugins/slog
 Description: Analyse oik-bwtrace daily trace summary reports
-Version: 1.2.0
+Version: 1.2.1
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com/about-bobbing-wide
 Text Domain: slog

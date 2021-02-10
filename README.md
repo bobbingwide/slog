@@ -5,7 +5,7 @@
 * Tags: trace, summary, performance, analysis
 * Requires at least: 5.6
 * Tested up to: 5.6.1
-* Stable tag: 1.2.0
+* Stable tag: 1.2.1
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -122,6 +122,9 @@ For other bespoke routines to analyse daily trace summary files see the slog-blo
 7. Slog admin > Settings tab
 
 ## Upgrade Notice 
+# 1.2.1 
+Elapsed report supports greater interval granularity.
+
 # 1.2.0 
 Now includes logic merged from slog-bloat.
 
@@ -144,6 +147,9 @@ Now supports source trace summary files with date format yyyymmdd or mmdd
 New plugin, available from oik-plugins and GitHub
 
 ## Changelog 
+# 1.2.1 
+* Changed: Support various intervals for Elapsed report,https://github.com/bobbingwide/slog/issues/18
+
 # 1.2.0 
 * Changed: Merged the admin page from slog-bloat,https://github.com/bobbingwide/slog/issues/16
 
