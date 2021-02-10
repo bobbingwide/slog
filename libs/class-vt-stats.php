@@ -100,7 +100,7 @@
 		 $this->narrator=Narrator::instance();
 		 $this->filter_rows = false;
 		 $this->set_interval( 2 );
-		 $this->set_elapsed_limit( 5 );
+		 $this->set_elapsed_limit( 3 );
 	 }
 
 	 /**
@@ -471,8 +471,8 @@
 
 	 function nthsecond( $elapsed, $denominator=10 ) {
 		 $elapsed_range=$this->roundToFraction( $elapsed, $denominator );
-		 if ( $elapsed_range > 5) {
-			 $elapsed_range = '>5';
+		 if ( $elapsed_range > $this->elapsed_limit) {
+			 $elapsed_range = '>' . $this->elapsed_limit;
 		 } else {
 			 $elapsed_range = '<' . $elapsed_range;
 		 }
