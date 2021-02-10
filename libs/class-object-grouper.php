@@ -199,7 +199,8 @@ class Object_Grouper extends Object_base {
 	 * Initialise groups so that we don't get gaps in the x-axis.
 	 *
 	 */
-	function init_groups( $callback, $low=0, $increment=0.05, $high=6 ) {
+	function init_groups( $callback, $low=0, $interval=2, $high=6 ) {
+		$increment = $interval / 100;
 		for ( $elapsed = $low; $elapsed <= $high; $elapsed += $increment ) {
 			$index = call_user_func( $callback, $elapsed );
 			$this->groups[ $index ] = 0;

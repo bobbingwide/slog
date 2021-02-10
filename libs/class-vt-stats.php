@@ -80,6 +80,15 @@
 	 public $http_response_filters;
 
 	 /**
+	  * @var integer interval in 100ths of a second
+	  */
+	 public $interval;
+	 /**
+	  * @var integer $elapsed_limit - eg 5 seconds
+	  */
+	 public $elapsed_limit;
+
+	 /**
 	  * Construct the source information for VT_stats
 	  */
 	 function __construct() {
@@ -90,6 +99,8 @@
 		 //$this->populate();
 		 $this->narrator=Narrator::instance();
 		 $this->filter_rows = false;
+		 $this->set_interval( 2 );
+		 $this->set_elapsed_limit( 5 );
 	 }
 
 	 /**
@@ -101,6 +112,27 @@
 	  */
 	 function set_file( $file=null ) {
 	 	$this->file = $file;
+	 }
+
+	 function set_interval( $interval) {
+	 	$this->interval = $interval;
+	 }
+
+	 function set_elapsed_limit( $elapsed_limit ) {
+	 	$this->elapsed_limit = $elapsed_limit;
+	 }
+
+	 function get_ieth() {
+	 	$ieth = [ $this, 'twentiethsecond'];
+	 	switch ( $this->interval ) {
+		    case 5:
+		    	$ieth = [ $this, 'twentiethsecond'];
+		    	break;
+		    case 2:
+		    	$ieth = [ $this, 'fiftiethsecond'];
+		        break;
+	    }
+	    return $ieth;
 	 }
 
 	 /**
@@ -460,6 +492,10 @@
 		 return $this->nthsecond( $elapsed, 20 );
 	 }
 
+	 function fiftiethsecond( $elapsed ) {
+	 	return $this->nthsecond( $elapsed, 50 );
+	 }
+
 
 	 function roundToFraction($number, $denominator = 5)  {
 		 $x = $number * $denominator;
@@ -603,7 +639,7 @@
 	 }
 
 	 /**
-	  * Runs the elapsed report that groups requests by elapsed time ranges of a tenth of a second.
+	  * Runs the elapsed report that groups requests by elapsed time ranges of an "ieth" of a second.
 	  *
 	  * We either need to set the time field... or change the logic that produces the table.
 	  *
@@ -612,8 +648,9 @@
 	 function run_elapsed_report() {
 	 	$this->grouper->reset();
 		 $this->grouper->time_field('final');
-		 $this->grouper->init_groups( array( $this, "twentiethsecond" ), 0, 0.05, 6.0 );
-		 $this->grouper->groupby( "final", array( $this, "twentiethsecond" ) );
+		 $ieth = $this->get_ieth();
+		 $this->grouper->init_groups( $ieth, 0, $this->interval, $this->elapsed_limit );
+		 $this->grouper->groupby( "final", $ieth );
 		 $this->grouper->ksort();
 		 $this->grouper->having( array( $this, "having_filter_value_ge" ) );
 		 //	 $grouper->report_percentages();
