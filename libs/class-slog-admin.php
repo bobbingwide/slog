@@ -19,6 +19,7 @@ class Slog_Admin {
 	 * Up to 12 files for comparison.
 	 *
 	 * Suppose it should be 13 if we want to compare against 'vanilla'
+     * Let's make it 15.
 	 * @var
 	 */
 	private $slog_files;
@@ -238,7 +239,7 @@ class Slog_Admin {
 	 */
 	function validate_slog_files() {
 		$this->slog_files = [];
-		for ( $i = 0; $i < 12; $i++ ) {
+		for ( $i = 0; $i < 15; $i++ ) {
 			$file = bw_array_get( $_REQUEST, "_slog_file_$i", null );
 			//echo $file;
 			$filename = $this->get_downloads_filename( $file );
@@ -267,7 +268,7 @@ class Slog_Admin {
 		stag( 'table', 'form-table' );
 		//bw_flush();
 		$fileoptions = $this->get_file_list();
-		for ( $i = 0; $i< 12; $i++ ) {
+		for ( $i = 0; $i< 15; $i++ ) {
 			$label = sprintf( __( 'Compare %1s', 'slog'), $i+1 );
 			//BW_::bw_textfield( "_slog_file_$i", 60, $label , $this->slog_files[$i] );
 			BW_::bw_select( "_slog_file_$i", $label,  $this->slog_files[$i], [ '#options' => $fileoptions, '#optional' => true ] );
@@ -507,6 +508,7 @@ class Slog_Admin {
 	function display_table( $content ) {
 		$content_array = explode( "\n", $content );
 		$heading = array_shift( $content_array );
+		$heading = str_replace( '.', ' ', $heading);
 		$headings = str_getcsv( $heading );
 		stag( 'table', 'wide-fat' );
 		stag( 'thead');
@@ -514,7 +516,12 @@ class Slog_Admin {
 		etag( 'thead');
 		stag( 'tbody');
 		foreach ( $content_array as $line ) {
+		    //echo $line;
 			$tablerow = str_getcsv( $line );
+			for ( $i=1; $i<count( $tablerow); $i++ ) {
+			    $tablerow[$i] = number_format( $tablerow[$i], 6);
+            }
+            //bw_trace2( $tablerow, "tablerow", false );
 			bw_tablerow( $tablerow );
 		}
 		etag( 'tbody');

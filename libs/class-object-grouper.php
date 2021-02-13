@@ -203,8 +203,11 @@ class Object_Grouper extends Object_base {
 		$increment = $interval / 100;
 		for ( $elapsed = $low; $elapsed <= $high; $elapsed += $increment ) {
 			$index = call_user_func( $callback, $elapsed );
+
 			$this->groups[ $index ] = 0;
 		}
+		bw_trace2( $this->groups, "this-groups" );
+
 	}
 
 

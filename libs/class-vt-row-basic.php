@@ -145,34 +145,37 @@ class VT_row_basic {
   public function __construct( $transline ) {
 	  $this->narrator = Narrator::instance();
     $this_trans = str_getcsv( $transline );
-    if ( count( $this_trans) > 24 ) {
+    $count_trans = count( $this_trans );
+    if ( $count_trans > 24 ) {
     	$this->narrator->narrate( "Too many columns", $transline );
+    } elseif ( $count_trans < 23 ) {
+        $this->narrator->narrate( "Too few columns", $transline );
+    } else {
+        $this->uri = $this->first_word($this_trans[0]);
+        $this->action = $this_trans[1];
+        $this->final = $this_trans[2];
+        $this->phpver = $this_trans[3];
+        $this->phpfns = $this_trans[4];
+        $this->userfns = $this_trans[5];
+        $this->classes = $this_trans[6];
+        $this->plugins = $this_trans[7];
+        $this->files = $this_trans[8];
+        $this->widgets = $this_trans[9];
+        $this->types = $this_trans[10];
+        $this->taxons = $this_trans[11];
+        $this->queries = $this_trans[12];
+        $this->qelapsed = $this_trans[13];
+        $this->tracefile = $this_trans[14];
+        $this->traces = $this_trans[15];
+        $this->traceerrors = $this_trans[16];
+        $this->hooks = $this_trans[17];
+        $this->remote_IP = $this_trans[18];
+        $this->elapsed = $this_trans[19];
+        $this->isodate = $this_trans[20];
+        $this->useragent = $this_trans[21];
+        $this->method = $this_trans[22];
+        $this->http_response = isset($this_trans[23]) ? $this_trans[23] : 'xxx';
     }
-    $this->uri = $this->first_word( $this_trans[0] );
-    $this->action = $this_trans[1];
-    $this->final  = $this_trans[2];
-    $this->phpver = $this_trans[3];
-    $this->phpfns = $this_trans[4];
-    $this->userfns= $this_trans[5];
-    $this->classes= $this_trans[6];
-    $this->plugins= $this_trans[7];
-    $this->files  = $this_trans[8];
-    $this->widgets= $this_trans[9];
-    $this->types  = $this_trans[10];
-    $this->taxons = $this_trans[11];
-    $this->queries = $this_trans[12];
-    $this->qelapsed = $this_trans[13];
-	$this->tracefile = $this_trans[14];
-    $this->traces = $this_trans[15];
-    $this->traceerrors = $this_trans[16];
-    $this->hooks = $this_trans[17];
-    $this->remote_IP = $this_trans[18];
-    $this->elapsed = $this_trans[19];
-	$this->isodate= $this_trans[20];
-	$this->useragent = $this_trans[21];
-	$this->method = $this_trans[22];
-	$this->http_response = isset( $this_trans[23] ) ? $this_trans[23] : 'xxx';
-
 	$this->uri_parser();
 	$this->set_request_type();
   }
