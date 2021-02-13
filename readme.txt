@@ -4,7 +4,7 @@ Donate link: https://www.oik-plugins.com/oik/oik-donate/
 Tags: trace, summary, performance, analysis
 Requires at least: 5.6
 Tested up to: 5.6.1
-Stable tag: 1.2.1
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,7 +18,7 @@ Use this to determine the effect of activating / deactivating a plugin on server
 The Slog plugin is a generic solution to enable performance comparison
 of server responses with different server configurations.
 
-Slog-bloat admin tabs are:
+Slog admin tabs are:
 
 Function | Processing
 ------- | ----------
@@ -26,6 +26,7 @@ Reports | Produce a variety of reports for a single daily trace summary file.
 Compare | Produce comparison charts for two or more trace summary files.
 Filter | Filter a daily trace summary file.
 Download | Download a daily trace summary file from a remote host site.
+Driver | Run a series of requests against the server URL.
 Settings | Define default/initial settings for the reports.
 
 === Reports ===
@@ -57,6 +58,10 @@ Use the Download tab to download a daily trace summary file.
 This will only work if the file is accessible to any browser. 
 If the file is protected from general access, returning a 403 or otherwise, then you'll need to download the file
 by another mechanism. eg FTP or from your site's control panel.
+
+=== Driver ===
+Drives a series of requests to the server. 
+Use this when you want to measure/compare server response time over a number of requests.
 
 === Settings ===
 Use the Settings tab to define default values to be used in the other forms.
@@ -119,8 +124,12 @@ For other bespoke routines to analyse daily trace summary files see the slog-blo
 5. Slog admin > Download tab 
 6. Slog admin > Filter tab
 7. Slog admin > Settings tab
+8. Slog admin > Driver tab
  
 == Upgrade Notice ==
+= 1.3.0 = 
+Adds the Driver tab.
+
 = 1.2.1 = 
 Elapsed report supports greater interval granularity.
 
@@ -146,6 +155,11 @@ Now supports source trace summary files with date format yyyymmdd or mmdd
 New plugin, available from oik-plugins and GitHub
 
 == Changelog == 
+= 1.3.0 =
+Added: First pass adding a Driver tab to run a request multiple times.,[github bobbingwide slog issues 19]
+Tested: With WordPress 5.6.1 and WordPress Multi Site
+Tested: With PHP 7.4
+
 = 1.2.1 = 
 * Changed: Support various intervals for Elapsed report,[github bobbingwide slog issues 18]
 
@@ -179,4 +193,3 @@ New plugin, available from oik-plugins and GitHub
 
 = 0.0.0 =
 * Added: New plugin
-
