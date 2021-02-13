@@ -29,6 +29,7 @@ class Slog_Admin {
 	private $slog_filter_rows;
 
 	private $reports_form;
+	private $driver_form;
 
 	function __construct() {
 		$this->get_options();
@@ -102,8 +103,9 @@ class Slog_Admin {
 		add_action( 'slog_nav_tab_download', [ $this, "nav_tab_download"] );
 		add_action( 'slog_nav_tab_filter', [ $this, "nav_tab_filter"] );
 		add_action( 'slog_nav_tab_reports', [$this, "nav_tab_reports"] );
-		add_action( 'slog_nav_tab_settings', [ $this, "nav_tab_settings"] );
-		// @TODO Convert to shared library?
+        add_action( 'slog_nav_tab_driver', [ $this, "nav_tab_driver"] );
+        add_action( 'slog_nav_tab_settings', [ $this, "nav_tab_settings"] );
+        // @TODO Convert to shared library?
 		//oik_require( "includes/bw-nav-tab.php" );
 		BW_::oik_menu_header( __( "Slog", "slog" ), 'w100pc' );
 		$tab = BW_nav_tab::bw_nav_tabs( "reports", "Reports" );
@@ -158,6 +160,12 @@ class Slog_Admin {
 		BW_::oik_box( null, null, __( "Settings form", "slog" ), [ $this, "settings_form" ] );
 	}
 
+	function nav_tab_driver() {
+        $this->driver_form = new Slog_Driver_Form( $this );
+	    BW_::oik_box( null, null, __( 'Driver', 'slog'), [ $this->driver_form, "driver_form"] );
+	    BW_::oik_box( null, null, __( 'Results', 'slog'), [ $this->driver_form, 'driver_results'] );
+    }
+
 	/**
 	 * Implements bw_nav_tabs_slog filter.
 	 *
@@ -168,6 +176,7 @@ class Slog_Admin {
 		$nav_tabs['compare'] = 'Compare';
 		$nav_tabs['download'] = 'Download';
 		$nav_tabs['filter'] = 'Filter';
+		$nav_tabs['driver'] = 'Driver';
 		$nav_tabs['settings'] = 'Settings';
 		return $nav_tabs;
 	}
