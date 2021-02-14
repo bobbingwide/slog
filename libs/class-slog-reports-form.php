@@ -81,9 +81,10 @@ class Slog_Reports_Form {
 		BW_::bw_select( 'type', __( 'Chart type', 'slog' ), $this->type, [ "#options" => $type_options ] );
 		BW_::bw_select( 'display', __( 'Display', 'slog' ), $this->display, [ "#options" => $display_options ] );
 		BW_::bw_textfield( 'having', 10, __( 'Having', 'slog'), $this->having );
+		// @TODO Add display of automatic filtering values.
 		bw_checkbox( '_slog_filter_rows', __('Automatically filter rows', 'slog'), $this->filter_rows );
-		// @TODO Add checkbox for automatic filtering.
-		// And display of automatic filtering values.
+        BW_::bw_textfield( '_slog_interval', 2, __('Elapsed chart interval (hundredths)', 'slog'), $this->interval );
+
 		etag( "table" );
 		e( isubmit( "_slog_action[_slog_reports]", __( 'Run report', 'slog' ), null ) );
 		etag( "form" );
