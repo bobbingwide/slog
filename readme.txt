@@ -4,7 +4,7 @@ Donate link: https://www.oik-plugins.com/oik/oik-donate/
 Tags: trace, summary, performance, analysis
 Requires at least: 5.6
 Tested up to: 5.6.1
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -127,6 +127,9 @@ For other bespoke routines to analyse daily trace summary files see the slog-blo
 8. Slog admin > Driver tab
  
 == Upgrade Notice ==
+= 1.3.1 =
+Add 100th second interval. Set elapsed limit to 1 second. Added copy CSV to clipboard button.
+
 = 1.3.0 = 
 Adds the Driver tab.
 
@@ -155,6 +158,13 @@ Now supports source trace summary files with date format yyyymmdd or mmdd
 New plugin, available from oik-plugins and GitHub
 
 == Changelog == 
+= 1.3.1 =
+Added: Ability to set the Interval and Elapsed limit,[github bobbingwide slog issues 18]
+Added: Copy CSV to clipboard button,[github bobbingwide slog issues 20]
+Changed: Compare up to 15 files. 
+Changed: Format table numbers with 6 decimal places. 
+
+
 = 1.3.0 =
 Added: First pass adding a Driver tab to run a request multiple times.,[github bobbingwide slog issues 19]
 Tested: With WordPress 5.6.1 and WordPress Multi Site
