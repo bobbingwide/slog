@@ -21,6 +21,7 @@ class Slog_Reports_Form {
 	private $having;
 	private $filter_rows;
 	private $interval;
+	private $elapsed_limit;
 
 	private $continue_processing;
 
@@ -47,7 +48,8 @@ class Slog_Reports_Form {
 		$this->having = bw_array_get( $_REQUEST, 'having', null );
 		$default_filter_rows = $this->slog_admin->get_slog_filter_rows();
 		$this->filter_rows = bw_array_get( $_REQUEST, '_slog_filter_rows', $default_filter_rows );
-		$this->interval = bw_array_get( $_REQUEST, '_slog_interval', 2 );
+		$this->interval = bw_array_get( $_REQUEST, '_slog_interval', $this->slog_admin->get_interval() );
+		$this->elapsed_limit = bw_array_get( $_REQUEST, '_slog_elapsed_limit', $this->slog_admin->get_elapsed_limit() );
 	}
 
 	/**
@@ -84,6 +86,7 @@ class Slog_Reports_Form {
 		// @TODO Add display of automatic filtering values.
 		bw_checkbox( '_slog_filter_rows', __('Automatically filter rows', 'slog'), $this->filter_rows );
         BW_::bw_textfield( '_slog_interval', 2, __('Elapsed chart interval (hundredths)', 'slog'), $this->interval );
+        BW_::bw_textfield( '_slog_elapsed_limit', 2, __('Elapsed time limit (seconds)', 'slog'), $this->elapsed_limit );
 
 		etag( "table" );
 		e( isubmit( "_slog_action[_slog_reports]", __( 'Run report', 'slog' ), null ) );
@@ -144,6 +147,7 @@ class Slog_Reports_Form {
 		$options['having'] = $this->having;
 		$options['filter'] = false;
 		$options['interval'] = $this->interval;
+		$options['elapsed_limit'] = $this->elapsed_limit;
 
 		//print_r( $options );
 		return $options;

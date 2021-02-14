@@ -42,6 +42,8 @@ class Slog_Reporter {
 	public $http_response_filters;
 
 	public $interval;
+	public $elapsed_limit;
+
 
 	public $narrator;
 
@@ -88,6 +90,7 @@ class Slog_Reporter {
 				$this->stats->set_http_response_filters( $this->http_response_filters );
 			}
 			$this->stats->set_interval( $this->interval );
+			$this->stats->set_elapsed_limit( $this->elapsed_limit );
 			$content = $this->stats->run_report();
 		} else {
 			p( "Dummy content. For test purposes only" );
@@ -111,6 +114,7 @@ class Slog_Reporter {
 		$this->having = $options['having'];
 		$this->filter = $options['filter'];
 		$this->interval = $options['interval'];
+		$this->elapsed_limit = $options['elapsed_limit'];
 		//$this->validate_file();
 
 	}
