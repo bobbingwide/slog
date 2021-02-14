@@ -20,6 +20,7 @@ class Slog_Reports_Form {
 	private $display_title;
 	private $having;
 	private $filter_rows;
+	private $interval;
 
 	private $continue_processing;
 
@@ -46,6 +47,7 @@ class Slog_Reports_Form {
 		$this->having = bw_array_get( $_REQUEST, 'having', null );
 		$default_filter_rows = $this->slog_admin->get_slog_filter_rows();
 		$this->filter_rows = bw_array_get( $_REQUEST, '_slog_filter_rows', $default_filter_rows );
+		$this->interval = bw_array_get( $_REQUEST, '_slog_interval', 2 );
 	}
 
 	/**
@@ -140,6 +142,7 @@ class Slog_Reports_Form {
 		$options['display_title'] = $this->get_display_title();
 		$options['having'] = $this->having;
 		$options['filter'] = false;
+		$options['interval'] = $this->interval;
 
 		//print_r( $options );
 		return $options;

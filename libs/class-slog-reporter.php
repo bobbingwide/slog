@@ -41,12 +41,16 @@ class Slog_Reporter {
 	 */
 	public $http_response_filters;
 
+	public $interval;
+
 	public $narrator;
-	public function __construct() {
+
+    public $stats;
+
+    public function __construct() {
 		$this->narrator = Narrator::instance();
 	}
 
-	public $stats;
 
 	/**
 	 * @TODO There must be an easier way of providing access to these settings.
@@ -83,6 +87,7 @@ class Slog_Reporter {
 				$this->stats->set_request_type_filters( $this->request_type_filters );
 				$this->stats->set_http_response_filters( $this->http_response_filters );
 			}
+			$this->stats->set_interval( $this->interval );
 			$content = $this->stats->run_report();
 		} else {
 			p( "Dummy content. For test purposes only" );
@@ -105,6 +110,7 @@ class Slog_Reporter {
 		$this->display_title = $options['display_title'];
 		$this->having = $options['having'];
 		$this->filter = $options['filter'];
+		$this->interval = $options['interval'];
 		//$this->validate_file();
 
 	}

@@ -471,6 +471,48 @@
 		 return ( $elapsed_range );
 	 }
 
+	 function n100thsSecond( $elapsed ) {
+         $elapsed_range=$this->roundToInterval( $elapsed, $this->interval );
+         if ( $elapsed_range >= $this->elapsed_limit) {
+             $elapsed_range = '>' . $this->elapsed_limit;
+         } else {
+             $elapsed_range = '<' . $elapsed_range;
+         }
+         return $elapsed_range;
+     }
+
+     /**
+      *
+      * Interval | Denominator | Common name
+      * -------- | ----------- | ----------
+      * 1 hundredths   | 100  | Hundredth
+      * 2 hundredths   | 50 | Fiftieth
+      * 5 hundredths   | 20 | Twentieth
+      * 10 hundredths | 10 | Tenth
+      * 50 hundredths | 2  | Half
+      * 100 hundredths | 1 | Second
+      *
+      * @param $elapsed
+      * @param int $denominator
+      * @return string
+      */
+     function roundToInterval( $elapsed, $interval ) {
+        // Avoid a zero divide.
+        if ( $interval > 0 ) {
+            $denominator = 100 / $interval;
+        } else {
+            $denominator = 10;
+        }
+        $x = $this->roundToFraction( $elapsed, $denominator );
+        return $x;
+     }
+
+     /**
+      *
+      * @param $elapsed
+      * @param int $denominator
+      * @return string
+      */
 	 function nthsecond( $elapsed, $denominator=10 ) {
 		 $elapsed_range=$this->roundToFraction( $elapsed, $denominator );
 		 if ( $elapsed_range >= $this->elapsed_limit) {
@@ -654,7 +696,7 @@
 	 function run_elapsed_report() {
 	 	$this->grouper->reset();
 		 $this->grouper->time_field('final');
-		 $ieth = $this->get_ieth();
+		 $ieth = [ $this, "n100thsSecond" ];
 		 $this->grouper->init_groups( $ieth, 0, $this->interval, $this->elapsed_limit );
 		 $this->grouper->groupby( "final", $ieth );
 		 $this->grouper->ksort();
