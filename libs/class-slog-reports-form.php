@@ -350,6 +350,7 @@ class Slog_Reports_Form {
 		if ( $slogger ) {
 			$content=$slogger->fetch_table();
 			$this->slog_admin_display_table( $content );
+			$this->slog_admin->display_copy_to_clipboard( $content );
 		} else {
 			gob();
 		}
@@ -372,7 +373,6 @@ class Slog_Reports_Form {
 		bw_flush();
 
 	}
-
 
 }
 

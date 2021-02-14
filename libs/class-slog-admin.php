@@ -484,6 +484,7 @@ class Slog_Admin {
 			$csv = $this->get_merged_contents( $contents );
 			$this->display_chart( $csv );
 			$this->display_table( $csv );
+            $this->display_copy_to_clipboard( $csv );
 		} else {
 			// Display individual reports.
 			foreach ( $contents as $content ) {
@@ -614,6 +615,17 @@ class Slog_Admin {
 		}
 		return $slogger;
 	}
+
+    function display_copy_to_clipboard( $content ) {
+        //BW_::bw_textarea( 'csv',80,'CSV data', $content, 10, ['class' => 'hidden'] );
+        wp_enqueue_script( 'copy2clip', oik_url( 'js/slog-copy2clip.js', 'slog'), null  );
+        $extras = kv( "id", "slog-csv" );
+        $extras .= kv( 'style', 'display:none;');
+        e( iarea( 'csv', 80, $content, 10, $extras ) );
+        e( '<button class=""button-secondary" onClick="slogCopyToClipboard()"  >Copy CSV to clipboard</button>' );
+
+        //     bw_textarea( $name, $len, $text, $value, $rows=10, $args=null ) {
+    }
 
 }
 
