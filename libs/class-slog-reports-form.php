@@ -184,7 +184,7 @@ class Slog_Reports_Form {
 			if ( $options['filter']) {
 				p( "Filtering: " . implode( ',', $slog_options['_slog_request_filters'] ) );
 				$slogger->set_request_type_filters( $slog_options['_slog_request_filters'] );
-				$slogger->set_http_response_filters( [ '200', 'xxx' ] );
+				$slogger->set_http_response_filters( [ '200', '302', 'xxx' ] );
 			}
 
 		} else {

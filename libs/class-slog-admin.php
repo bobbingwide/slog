@@ -74,6 +74,7 @@ class Slog_Admin {
 		$request_types['GET-BOT-AJAX'] = 'GET-BOT-AJAX';
 		$request_types['GET-REST'] = 'GET-REST';
 		$request_types['GET-CLI'] = 'GET-CLI';
+		$request_types['GET-404'] = 'GET-404';
 		$request_types['GET-spam'] = 'GET-spam';
 		$request_types['HEAD-FE'] = 'HEAD-FE';
 		$request_types['POST-FE'] = 'POST-FE';
@@ -451,7 +452,7 @@ class Slog_Admin {
 		//$this->slog_request_filters
 		$vt_stats->set_request_type_filters( $this->slog_request_filters );
 		/** Hardcoded for now. xxx represents unknown */
-		$vt_stats->set_http_response_filters( ['200', 'xxx']);
+		$vt_stats->set_http_response_filters( ['200', '302', 'xxx']);
 		$vt_stats->load_file();
 		$vt_stats->filter();
 		$vt_stats->write_filtered( $this->get_downloads_filename( $this->slog_filtered_file ) );
@@ -472,7 +473,7 @@ class Slog_Admin {
 		$contents = [];
 		$slogger= $this->slog_admin_slog_reporter();
 		$slogger->set_request_type_filters( $this->slog_request_filters);
-		$slogger->set_http_response_filters( ['200', 'xxx' ] );
+		$slogger->set_http_response_filters( ['200', '302', 'xxx' ] );
 		foreach ( $this->slog_files as $file ) {
 			if ( $file ) {
 				$options=$this->get_reporter_options( $file );

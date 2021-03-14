@@ -174,6 +174,7 @@ class VT_row_basic {
         $this->isodate = $this_trans[20];
         $this->useragent = $this_trans[21];
         $this->method = $this_trans[22];
+        // HTTP response becomes 'xxx' when unknown.
         $this->http_response = isset($this_trans[23]) ? $this_trans[23] : 'xxx';
     }
 	$this->uri_parser();
