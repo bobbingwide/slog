@@ -118,6 +118,7 @@ class Slog_Admin {
 		add_action( 'slog_nav_tab_filter', [ $this, "nav_tab_filter"] );
 		add_action( 'slog_nav_tab_reports', [$this, "nav_tab_reports"] );
         add_action( 'slog_nav_tab_driver', [ $this, "nav_tab_driver"] );
+        add_action( 'slog_nav_tab_search', [$this, "nav_tab_search"] );
         add_action( 'slog_nav_tab_settings', [ $this, "nav_tab_settings"] );
         // @TODO Convert to shared library?
 		//oik_require( "includes/bw-nav-tab.php" );
@@ -180,7 +181,15 @@ class Slog_Admin {
 	    BW_::oik_box( null, null, __( 'Results', 'slog'), [ $this->driver_form, 'driver_results'] );
     }
 
-	/**
+    function nav_tab_search() {
+        $this->search_form = new Slog_Search_Form( $this );
+        $this->process_request();
+
+        BW_::oik_box( null, null, __( 'Results', 'slog'), [ $this->search_form, 'search_results'] );
+        BW_::oik_box( null, null, __( 'Search', 'slog'), [ $this->search_form, "search_form"] );
+    }
+
+    /**
 	 * Implements bw_nav_tabs_slog filter.
 	 *
 	 * @TODO - the filter functions should check global $pagenow before adding any tabs - to support multiple pages using this logic
@@ -191,6 +200,7 @@ class Slog_Admin {
 		$nav_tabs['download'] = 'Download';
 		$nav_tabs['filter'] = 'Filter';
 		$nav_tabs['driver'] = 'Driver';
+		$nav_tabs['search'] = 'Search';
 		$nav_tabs['settings'] = 'Settings';
 		return $nav_tabs;
 	}
@@ -408,6 +418,9 @@ class Slog_Admin {
 				case '_slog_reports':
 					$this->slog_reports();
 					break;
+                case '_slog_search':
+                    $this->slog_search();
+                    break;
 				default:
 					BW_::p( "Action $action not yet implemented" );
 			}
@@ -505,6 +518,12 @@ class Slog_Admin {
 		$this->reports_form->set_continue_processing();
 
 	}
+
+	function slog_search() {
+
+	    $this->search_form->process();
+
+    }
 
 
 	function get_merged_contents( $contents ) {
