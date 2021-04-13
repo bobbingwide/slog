@@ -4,8 +4,8 @@
 * Donate link: https://www.oik-plugins.com/oik/oik-donate/
 * Tags: trace, summary, performance, analysis
 * Requires at least: 5.6
-* Tested up to: 5.6.1
-* Stable tag: 1.3.1
+* Tested up to: 5.7
+* Stable tag: 1.4.0
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,7 @@ Compare | Produce comparison charts for two or more trace summary files.
 Filter | Filter a daily trace summary file.
 Download | Download a daily trace summary file from a remote host site.
 Driver | Run a series of requests against the server URL.
+Search | Search trace files for a selected string.
 Settings | Define default/initial settings for the reports.
 
 ### Reports 
@@ -63,6 +64,11 @@ by another mechanism. eg FTP or from your site's control panel.
 ### Driver 
 Drives a series of requests to the server.
 Use this when you want to measure/compare server response time over a number of requests.
+
+### Search 
+Allows you to search multiple trace files for any string.
+Produces a link to each file searched.
+Search may produce a lot of output.
 
 ### Settings 
 Use the Settings tab to define default values to be used in the other forms.
@@ -126,8 +132,12 @@ For other bespoke routines to analyse daily trace summary files see the slog-blo
 6. Slog admin > Filter tab
 7. Slog admin > Settings tab
 8. Slog admin > Driver tab
+9. Slog admin > Search tab
 
 ## Upgrade Notice 
+# 1.4.0 
+Upgrade for the prototype Search facility.
+
 # 1.3.1 
 Add 100th second interval. Set elapsed limit to 1 second. Added copy CSV to clipboard button.
 
@@ -159,12 +169,16 @@ Now supports source trace summary files with date format yyyymmdd or mmdd
 New plugin, available from oik-plugins and GitHub
 
 ## Changelog 
+# 1.4.0 
+* Added: Search tab,https://github.com/bobbingwide/slog/issues/23
+* Tested: With WordPress 5.7 and WordPress Multi Site
+* Tested: With PHP 8.0
+
 # 1.3.1 
 * Added: Ability to set the Interval and Elapsed limit,https://github.com/bobbingwide/slog/issues/18
 * Added: Copy CSV to clipboard button,https://github.com/bobbingwide/slog/issues/20
 * Changed: Compare up to 15 files.
 * Changed: Format table numbers with 6 decimal places.
-
 
 # 1.3.0 
 * Added: First pass adding a Driver tab to run a request multiple times.,https://github.com/bobbingwide/slog/issues/19
