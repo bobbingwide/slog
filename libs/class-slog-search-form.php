@@ -61,13 +61,15 @@ class Slog_Search_Form {
      * Attempts to create file link.
      *
      * Note: This might not be accessible if the trace file directory is not under the document root.
+     * We also have to cater for subdirectory installs.
      *
      * @param $file
      * @param $full_file_name
      */
     function file_link( $file, $full_file_name ) {
         $url = site_url();
-        $relative = str_replace( $_SERVER['DOCUMENT_ROOT'], '', $full_file_name );
+        $abspath = wp_normalize_path( ABSPATH);
+        $relative = str_replace( $abspath, '/', $full_file_name );
         $url .= $relative;
         alink( null, $url, $file  );
     }
