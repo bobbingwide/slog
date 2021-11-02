@@ -179,6 +179,8 @@ class Slog_Admin {
         $this->driver_form = new Slog_Driver_Form( $this );
 	    BW_::oik_box( null, null, __( 'Driver', 'slog'), [ $this->driver_form, "driver_form"] );
 	    BW_::oik_box( null, null, __( 'Results', 'slog'), [ $this->driver_form, 'driver_results'] );
+        BW_::oik_box( null, null, __( "Daily Trace Summary", 'slog' ), "oik_trace_summary" );
+
     }
 
     function nav_tab_search() {
