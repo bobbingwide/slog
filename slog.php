@@ -163,7 +163,6 @@ function slog_admin_enqueue_scripts() {
  */
 
 function slog_admin_page() {
-	// If slog implements autoload will it find Slog-Bloat's classes?
 	if ( class_exists( 'Slog_Admin')) {
 		$slog_admin_page=new Slog_Admin();
 		$slog_admin_page->process();
