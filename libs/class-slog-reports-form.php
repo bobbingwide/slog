@@ -20,6 +20,7 @@ class Slog_Reports_Form {
 	private $display_title;
 	private $having;
 	private $filter_rows;
+	private $filter_url;
 	private $interval;
 	private $elapsed_limit;
 
@@ -48,6 +49,7 @@ class Slog_Reports_Form {
 		$this->having = bw_array_get( $_REQUEST, 'having', null );
 		$default_filter_rows = $this->slog_admin->get_slog_filter_rows();
 		$this->filter_rows = bw_array_get( $_REQUEST, '_slog_filter_rows', $default_filter_rows );
+		$this->filter_url = bw_array_get( $_REQUEST, '_slog_filter_url', $this->slog_admin->get_slog_filter_url() );
 		$this->interval = bw_array_get( $_REQUEST, '_slog_interval', $this->slog_admin->get_interval() );
 		$this->elapsed_limit = bw_array_get( $_REQUEST, '_slog_elapsed_limit', $this->slog_admin->get_elapsed_limit() );
 	}
@@ -85,6 +87,7 @@ class Slog_Reports_Form {
 		BW_::bw_textfield( 'having', 10, __( 'Having', 'slog'), $this->having );
 		// @TODO Add display of automatic filtering values.
 		bw_checkbox( '_slog_filter_rows', __('Automatically filter rows', 'slog'), $this->filter_rows );
+        BW_::bw_textfield( '_slog_filter_url', 60, __( 'Filter URL', 'slog') , $this->filter_url );
         BW_::bw_textfield( '_slog_interval', 2, __('Elapsed chart interval (hundredths)', 'slog'), $this->interval );
         BW_::bw_textfield( '_slog_elapsed_limit', 2, __('Elapsed time limit (seconds)', 'slog'), $this->elapsed_limit );
 
@@ -146,6 +149,7 @@ class Slog_Reports_Form {
 		$options['display_title'] = $this->get_display_title();
 		$options['having'] = $this->having;
 		$options['filter'] = false;
+		$options['filter_url'] = $this->filter_url;
 		$options['interval'] = $this->interval;
 		$options['elapsed_limit'] = $this->elapsed_limit;
 
@@ -185,6 +189,7 @@ class Slog_Reports_Form {
 				p( "Filtering: " . implode( ',', $slog_options['_slog_request_filters'] ) );
 				$slogger->set_request_type_filters( $slog_options['_slog_request_filters'] );
 				$slogger->set_http_response_filters( [ '200', '302', 'xxx' ] );
+				$slogger->set_filter_url( $slog_options[ '_slog_filter_url'] );
 			}
 
 		} else {

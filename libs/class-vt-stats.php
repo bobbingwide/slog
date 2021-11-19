@@ -79,6 +79,12 @@
 	 public $request_type_filters;
 	 public $http_response_filters;
 
+     /**
+      * Specific URL to filter.
+      * @var
+      */
+	 public $filter_url;
+
 	 /**
 	  * @var integer interval in 100ths of a second
 	  */
@@ -775,7 +781,12 @@
 		 //print_r( $filters );
 	 }
 
-	 /**
+	 function set_filter_url( $filter_url ) {
+	    $this->filter_url = $filter_url;
+	    //echo $this->filter_url;
+     }
+
+     /**
 	  * Filters on request_type.
 	  *
 	  * @param $request_type
@@ -812,8 +823,27 @@
 		 return $filter;
 	 }
 
-
-
+     /**
+      * Checks if this URI/URL should be processed.
+      *
+      * @param $uri
+      * @return bool true when the URI should be processed.
+      */
+	 function is_filter_url( $uri ) {
+	     $filter = empty( $this->filter_url );
+	     if ( !$filter ) {
+	         $filter_url = $this->filter_url;
+	         if ( strpos( $filter_url, '*') ) {
+                 $filter_url = rtrim($filter_url, '*');
+                 $pos = strpos($uri, $filter_url);
+                 $filter = $pos !== false;
+             } else {
+	             $filter = $uri === $filter_url;
+             }
+         }
+	     //e( "$uri $filter" );
+	     return $filter;
+     }
 
 	 /**
 	  * Extra logic to detect spammy requests.
@@ -880,6 +910,7 @@
 		    $continue&=$this->probably_not_spam( $row->uri );
 		    //$this->narrator->narrate( "continue spam", $continue );
 		    //$this->narrator->narrate( "Elapsed", $row->elapsed );
+            $continue&= $this->is_filter_url( $row->uri );
 		    $continue&=$row->elapsed < 10;
 		    ///$this->narrator->narrate( "continue elapsed", $continue );
 		    //$this->narrator->narrate( '<br />', null );

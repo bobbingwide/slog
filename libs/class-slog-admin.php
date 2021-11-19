@@ -28,6 +28,7 @@ class Slog_Admin {
 	private $slog_remote_url;
 	private $slog_request_filters;
 	private $slog_filter_rows;
+	private $slog_filter_url;
 	private $slog_interval;
 	private $slog_elapsed_limit;
 
@@ -49,6 +50,7 @@ class Slog_Admin {
 			$this->slog_remote_url   =$options['_slog_remote_url'];
 			$this->slog_request_filters = isset( $options['_slog_request_filters'] ) ? $options['_slog_request_filters'] : $this->get_request_types();
 			$this->slog_filter_rows = isset( $options['_slog_filter_rows'] ) ? $options['_slog_filter_rows'] : false;
+			$this->slog_filter_url = $options['_slog_filter_url'];
 			$this->slog_interval = isset( $options['_slog_interval'] ) ? $options['_slog_interval'] : 1;
 			$this->slog_elapsed_limit = isset( $options['_slog_elapsed_limit'] ) ? $options['_slog_elapsed_limit'] : 1.5;
 		}
@@ -101,6 +103,10 @@ class Slog_Admin {
 	function get_slog_filter_rows() {
 		return $this->slog_filter_rows;
 	}
+
+	function get_slog_filter_url() {
+	    return $this->slog_filter_url;
+    }
 
 	function get_interval() {
 	    return $this->slog_interval;
@@ -214,6 +220,7 @@ class Slog_Admin {
 		$this->validate_slog_filtered_file();
 		$this->validate_slog_files();
 		$this->validate_slog_filter_rows();
+		$this->validate_slog_filter_url();
 		$this->validate_slog_interval();
 		$this->validate_slog_elapsed_limit();
 		$this->perform_action();
@@ -258,6 +265,15 @@ class Slog_Admin {
 		$slog_filter_rows = bw_array_get( $_REQUEST, '_slog_filter_rows', $this->slog_filter_rows );
 		$this->slog_filter_rows = $slog_filter_rows;
 	}
+
+    /**
+     * Validates the URL for filtering when running compares
+     *
+     */
+    function validate_slog_filter_url() {
+        $slog_filter_url = bw_array_get( $_REQUEST, '_slog_filter_url', $this->slog_filter_url );
+        $this->slog_filter_url = $slog_filter_url;
+    }
 
 	function validate_slog_interval() {
         $slog_interval = bw_array_get( $_REQUEST, '_slog_interval', $this->slog_interval );
@@ -317,6 +333,7 @@ class Slog_Admin {
 			BW_::bw_select( "_slog_file_$i", $label,  $this->slog_files[$i], [ '#options' => $fileoptions, '#optional' => true ] );
 			//BW_::bw_textfield( '_slog_file_1', 60, __( 'Compare 2' ), $this->slog_file[1] );
 		}
+        BW_::bw_textfield( '_slog_filter_url', 60, __( 'Filter URL', 'slog') , $this->slog_filter_url );
         BW_::bw_textfield( '_slog_interval', 2, __('Elapsed chart interval (hundredths)', 'slog'), $this->slog_interval );
         BW_::bw_textfield( '_slog_elapsed_limit', 2, __('Elapsed limit (seconds)', 'slog'), $this->slog_elapsed_limit );
 		etag( "table" );
@@ -381,6 +398,7 @@ class Slog_Admin {
         BW_::bw_textfield_arr( 'slog_options', __( 'Remote URL trace files directory', 'slog' ), $options, '_slog_remote_url', 60 );
 		BW_::bw_textfield_arr( 'slog_options', __( 'Download files directory', 'slog' ), $options, '_slog_downloads_dir', 60 );
 		bw_checkbox_arr( 'slog_options', __('Automatically filter rows', 'slog'), $options, '_slog_filter_rows' );
+		BW_::bw_textfield_arr( 'slog_options', __( 'Filter URL', 'slog') , $options, '_slog_filter_url', 60 );
 		//BW_::bw_textfield_arr( 'slog_options', __( 'Filtered files directory', 'slog' ), $options, '_slog_filtered_dir', 60 );
 		$request_types = $this->get_request_types();
 		$args = [ '#options' => $request_types, '#multiple' => count( $request_types ) ];
@@ -596,6 +614,7 @@ class Slog_Admin {
 		$options['display_title'] = __('Percentage count accumulative', 'slog');
 		$options['having'] = '';
 		$options['filter'] = $this->slog_filter_rows;
+		$options['filter_url'] = $this->slog_filter_url;
 		$options['interval'] = $this->slog_interval;
         $options['elapsed_limit'] = $this->slog_elapsed_limit;
 		return $options;

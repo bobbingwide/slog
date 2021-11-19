@@ -41,6 +41,8 @@ class Slog_Reporter {
 	 */
 	public $http_response_filters;
 
+	public $filter_url;
+
 	public $interval;
 	public $elapsed_limit;
 
@@ -67,6 +69,11 @@ class Slog_Reporter {
 		$this->http_response_filters = $filters;
 	}
 
+	public function set_filter_url( $filter_url ) {
+	    $this->filter_url = $filter_url;
+	    //echo __FUNCTION__ .  $filter_url;
+    }
+
 	/**
 	 * Runs the report.
 	 *
@@ -88,6 +95,7 @@ class Slog_Reporter {
 			if ( $this->filter ) {
 				$this->stats->set_request_type_filters( $this->request_type_filters );
 				$this->stats->set_http_response_filters( $this->http_response_filters );
+				$this->stats->set_filter_url( $this->filter_url );
 			}
 			$this->stats->set_interval( $this->interval );
 			$this->stats->set_elapsed_limit( $this->elapsed_limit );
@@ -113,6 +121,7 @@ class Slog_Reporter {
 		$this->display_title = $options['display_title'];
 		$this->having = $options['having'];
 		$this->filter = $options['filter'];
+		$this->filter_url = $options['filter_url'];
 		$this->interval = $options['interval'];
 		$this->elapsed_limit = $options['elapsed_limit'];
 		//$this->validate_file();
