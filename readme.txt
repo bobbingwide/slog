@@ -3,8 +3,8 @@ Contributors: bobbingwide, vsgloik
 Donate link: https://www.oik-plugins.com/oik/oik-donate/
 Tags: trace, summary, performance, analysis
 Requires at least: 5.6
-Tested up to: 5.7
-Stable tag: 1.4.0
+Tested up to: 5.9
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -134,6 +134,9 @@ For other bespoke routines to analyse daily trace summary files see the slog-blo
 9. Slog admin > Search tab
  
 == Upgrade Notice ==
+= 1.5.0 = 
+Upgrade for easier running of server performance tests
+
 = 1.4.0 = 
 Upgrade for the prototype Search facility.
 
@@ -168,6 +171,11 @@ Now supports source trace summary files with date format yyyymmdd or mmdd
 New plugin, available from oik-plugins and GitHub
 
 == Changelog == 
+= 1.5.0 =
+* Changed: Add URL filtering logic
+* Changed: Remove out of date comment
+* Changed: Driver tab: Add Daily Trace Summary box to set the trace summary file #25
+
 = 1.4.0 = 
 * Added: Search tab,[github bobbingwide slog issues 23] 
 * Tested: With WordPress 5.7 and WordPress Multi Site

@@ -272,7 +272,7 @@ class Slog_Admin {
      */
     function validate_slog_filter_url() {
         $slog_filter_url = bw_array_get( $_REQUEST, '_slog_filter_url', $this->slog_filter_url );
-        $this->slog_filter_url = $slog_filter_url;
+        $this->slog_filter_url = trim( $slog_filter_url );
     }
 
 	function validate_slog_interval() {
