@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright (C) Copyright Bobbing Wide 2015-2021
+ * @copyright (C) Copyright Bobbing Wide 2015-2021, 2023
 
  * @package wp-top12 / slog
  *
@@ -93,6 +93,8 @@
 	  * @var integer $elapsed_limit - eg 5 seconds
 	  */
 	 public $elapsed_limit;
+
+	 public $narrator;
 
 	 /**
 	  * Construct the source information for VT_stats
