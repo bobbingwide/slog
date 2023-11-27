@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (C) Copyright Bobbing Wide 2021
+ * @copyright (C) Copyright Bobbing Wide 2021, 2023
  * @package slog
  *
  */
@@ -23,6 +23,7 @@ class Slog_Reports_Form {
 	private $filter_url;
 	private $interval;
 	private $elapsed_limit;
+	private $summary_prefix;
 
 	private $continue_processing;
 
