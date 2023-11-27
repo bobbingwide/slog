@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (C) Copyright Bobbing Wide 2021
+ * @copyright (C) Copyright Bobbing Wide 2021, 2023
  * @package slog
  *
  * Slog Reporter - runs Slog reports to analyse Daily Trace Summary files.
@@ -25,6 +25,7 @@ class Slog_Reporter {
 	public $type;
 	public $display;
 	public $having;
+	public $report_title;
 
 	/**
 	 * @var bool $filter - true if we want to filter the rows being loaded
@@ -50,6 +51,8 @@ class Slog_Reporter {
 	public $narrator;
 
     public $stats;
+
+	public $display_title;
 
     public function __construct() {
 		$this->narrator = Narrator::instance();
