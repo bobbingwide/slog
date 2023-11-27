@@ -34,6 +34,7 @@ class Slog_Admin {
 
 	private $reports_form;
 	private $driver_form;
+	private $search_form;
 
 	function __construct() {
 		$this->get_options();
@@ -548,7 +549,10 @@ class Slog_Admin {
 
 	function get_merged_contents( $contents ) {
 		//print_r( $contents );
-		$csv = "Elapsed," . implode(',', $this->slog_files) . "\n";
+		$log_files = implode(',', $this->slog_files);
+		$log_files = rtrim( $log_files, ',');
+		$csv = "Elapsed," . $log_files . "\n";
+
 		if ( count( $contents ) > 1 ) {
 			$merger=new CSV_merger();
 			$merger->set_echo( false );
