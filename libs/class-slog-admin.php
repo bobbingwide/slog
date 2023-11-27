@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright (C) Copyright Bobbing Wide 2021
+ * @copyright (C) Copyright Bobbing Wide 2021-2023
  * @package slog
  * Class Slog_Admin
  */

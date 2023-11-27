@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @copyright (C) Copyright Bobbing Wide 2015-2021
+ * @copyright (C) Copyright Bobbing Wide 2015-2021, 2023
  * @package wp-top12
  *
  * VT_row_basic implements a subset of the information for a row from a bwtrace.vt.ccyymmdd file
@@ -107,6 +107,9 @@ class VT_row_basic {
 	public $request_type; // The type of request.
   //public $qparms; // Query parameters
 	public $narrator;
+	public $phpver;
+	public $phpfns;
+	public $userfns;
 	/**
 	 *
      # | name | Field | sample value
