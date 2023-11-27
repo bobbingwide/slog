@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright (C) Copyright Bobbing Wide 2015-2021
+ * @copyright (C) Copyright Bobbing Wide 2015-2023
  * @package wp-top12
  * Class: Object_Grouper
  *
@@ -70,6 +70,8 @@ class Object_Grouper extends Object_base {
 	 * returns true if the object is to be grouped
 	 */
 	public $where;
+	public $having;
+	public $field_value;
 
 	public function __construct() {
 		//$this->objects = null;
